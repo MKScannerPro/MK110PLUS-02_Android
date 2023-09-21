@@ -105,7 +105,7 @@ public class SetAppMQTT02Activity extends BaseActivity<ActivityMqttApp02Binding>
         });
         mBind.vpMqtt.setOffscreenPageLimit(3);
         mBind.rgMqtt.setOnCheckedChangeListener(this);
-        expertFilePath = RemoteMainWithMeteringActivity.PATH_LOGCAT + File.separator + "export" + File.separator + "Settings for APP.xlsx";
+        expertFilePath = RemoteMainWithMetering02Activity.PATH_LOGCAT + File.separator + "export" + File.separator + "Settings for APP.xlsx";
     }
 
     @Override

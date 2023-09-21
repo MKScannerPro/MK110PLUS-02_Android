@@ -17,7 +17,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.moko.mkremotegw02.AppConstants;
 import com.moko.mkremotegw02.R;
-import com.moko.mkremotegw02.activity.RemoteMainWithMeteringActivity;
+import com.moko.mkremotegw02.activity.RemoteMainWithMetering02Activity;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityModifySettings02Binding;
 import com.moko.mkremotegw02.db.DBTools02;
@@ -143,7 +143,7 @@ public class ModifySettings02Activity extends BaseActivity<ActivityModifySetting
                     mHandler.removeMessages(0);
                     ToastUtils.showToast(ModifySettings02Activity.this, "Set up succeed");
                     // 跳转首页，刷新数据
-                    Intent intent = new Intent(ModifySettings02Activity.this, RemoteMainWithMeteringActivity.class);
+                    Intent intent = new Intent(ModifySettings02Activity.this, RemoteMainWithMetering02Activity.class);
                     intent.putExtra(AppConstants.EXTRA_KEY_FROM_ACTIVITY, TAG);
                     intent.putExtra(AppConstants.EXTRA_KEY_MAC, mMokoDevice.mac);
                     startActivity(intent);

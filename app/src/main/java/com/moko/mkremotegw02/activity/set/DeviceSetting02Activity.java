@@ -20,7 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import com.moko.mkremotegw02.AppConstants;
 import com.moko.mkremotegw02.R;
 import com.moko.mkremotegw02.activity.DataReportTimeout02Activity;
-import com.moko.mkremotegw02.activity.RemoteMainWithMeteringActivity;
+import com.moko.mkremotegw02.activity.RemoteMainWithMetering02Activity;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityDeviceSetting02Binding;
 import com.moko.mkremotegw02.db.DBTools02;
@@ -177,7 +177,7 @@ public class DeviceSetting02Activity extends BaseActivity<ActivityDeviceSetting0
                 mBind.tvName.postDelayed(() -> {
                     dismissLoadingProgressDialog();
                     // 跳转首页，刷新数据
-                    Intent intent = new Intent(this, RemoteMainWithMeteringActivity.class);
+                    Intent intent = new Intent(this, RemoteMainWithMetering02Activity.class);
                     intent.putExtra(AppConstants.EXTRA_KEY_FROM_ACTIVITY, TAG);
                     startActivity(intent);
                 }, 500);

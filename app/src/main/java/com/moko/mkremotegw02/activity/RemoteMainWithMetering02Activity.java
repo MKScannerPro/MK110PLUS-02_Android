@@ -26,6 +26,7 @@ import com.moko.mkremotegw02.activity.set.DeviceSetting02Activity;
 import com.moko.mkremotegw02.activity.set.ModifySettings02Activity;
 import com.moko.mkremotegw02.adapter.Device02Adapter;
 import com.moko.mkremotegw02.base.BaseActivity;
+import com.moko.mkremotegw02.databinding.ActivityMainRemoteWithMetering02Binding;
 import com.moko.mkremotegw02.databinding.ActivityMainRemoteWithMeteringBinding;
 import com.moko.mkremotegw02.db.DBTools02;
 import com.moko.mkremotegw02.dialog.AlertMessageDialog;
@@ -61,7 +62,7 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class RemoteMainWithMeteringActivity extends BaseActivity<ActivityMainRemoteWithMeteringBinding> implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener {
+public class RemoteMainWithMetering02Activity extends BaseActivity<ActivityMainRemoteWithMetering02Binding> implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener {
     private ArrayList<MokoDevice> devices;
     private Device02Adapter adapter;
     public Handler mHandler;
@@ -130,8 +131,8 @@ public class RemoteMainWithMeteringActivity extends BaseActivity<ActivityMainRem
     }
 
     @Override
-    protected ActivityMainRemoteWithMeteringBinding getViewBinding() {
-        return ActivityMainRemoteWithMeteringBinding.inflate(getLayoutInflater());
+    protected ActivityMainRemoteWithMetering02Binding getViewBinding() {
+        return ActivityMainRemoteWithMetering02Binding.inflate(getLayoutInflater());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -326,7 +327,7 @@ public class RemoteMainWithMeteringActivity extends BaseActivity<ActivityMainRem
         dialog.setMessage("Please confirm again whether to \n remove the device");
         dialog.setOnAlertConfirmListener(() -> {
             if (!MQTTSupport.getInstance().isConnected()) {
-                ToastUtils.showToast(RemoteMainWithMeteringActivity.this, R.string.network_error);
+                ToastUtils.showToast(RemoteMainWithMetering02Activity.this, R.string.network_error);
                 return;
             }
             showLoadingProgressDialog();
@@ -343,7 +344,7 @@ public class RemoteMainWithMeteringActivity extends BaseActivity<ActivityMainRem
                 }
             }
             XLog.i(String.format("删除设备:%s", mokoDevice.name));
-            DBTools02.getInstance(RemoteMainWithMeteringActivity.this).deleteDevice(mokoDevice);
+            DBTools02.getInstance(RemoteMainWithMetering02Activity.this).deleteDevice(mokoDevice);
             EventBus.getDefault().post(new DeviceDeletedEvent(mokoDevice.id));
             devices.remove(mokoDevice);
             adapter.replaceData(devices);

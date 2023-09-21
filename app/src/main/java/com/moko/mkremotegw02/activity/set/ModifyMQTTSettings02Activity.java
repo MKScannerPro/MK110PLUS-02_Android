@@ -29,19 +29,19 @@ import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.fragment.GeneralDevice02Fragment;
 import com.moko.mkremotegw02.fragment.LWT02Fragment;
-import com.moko.mkremotegw02.fragment.SSLDeviceUrl03Fragment;
-import com.moko.mkremotegw02.fragment.UserDevice03Fragment;
+import com.moko.mkremotegw02.fragment.SSLDeviceUrl02Fragment;
+import com.moko.mkremotegw02.fragment.UserDevice02Fragment;
 import com.moko.mkremotegw02.utils.FileUtils;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.mkremotegw02.utils.ToastUtils;
 import com.moko.mkremotegw02.utils.Utils;
-import com.moko.support.remotegw03.MQTTConstants03;
-import com.moko.support.remotegw03.MQTTSupport03;
-import com.moko.support.remotegw03.entity.MsgConfigResult;
-import com.moko.support.remotegw03.entity.MsgNotify;
-import com.moko.support.remotegw03.entity.MsgReadResult;
-import com.moko.support.remotegw03.event.DeviceOnlineEvent;
-import com.moko.support.remotegw03.event.MQTTMessageArrivedEvent;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.support.remotegw02.entity.MsgConfigResult;
+import com.moko.support.remotegw02.entity.MsgNotify;
+import com.moko.support.remotegw02.entity.MsgReadResult;
+import com.moko.support.remotegw02.event.DeviceOnlineEvent;
+import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -63,8 +63,8 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
     public static String TAG = ModifyMQTTSettings02Activity.class.getSimpleName();
     private final String FILTER_ASCII = "[ -~]*";
     private GeneralDevice02Fragment generalFragment;
-    private UserDevice03Fragment userFragment;
-    private SSLDeviceUrl03Fragment sslFragment;
+    private UserDevice02Fragment userFragment;
+    private SSLDeviceUrl02Fragment sslFragment;
     private LWT02Fragment lwtFragment;
     private ArrayList<Fragment> fragments;
     private MQTTConfig mqttDeviceConfig;
@@ -133,8 +133,8 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
     private void createFragment() {
         fragments = new ArrayList<>();
         generalFragment = GeneralDevice02Fragment.newInstance();
-        userFragment = UserDevice03Fragment.newInstance();
-        sslFragment = SSLDeviceUrl03Fragment.newInstance();
+        userFragment = UserDevice02Fragment.newInstance();
+        sslFragment = SSLDeviceUrl02Fragment.newInstance();
         lwtFragment = LWT02Fragment.newInstance();
         fragments.add(generalFragment);
         fragments.add(userFragment);
@@ -180,7 +180,7 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
             e.printStackTrace();
             return;
         }
-        if (msg_id == MQTTConstants03.READ_MSG_ID_DEVICE_STATUS) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_DEVICE_STATUS) {
             Type type = new TypeToken<MsgNotify<JsonObject>>() {
             }.getType();
             MsgNotify<JsonObject> result = new Gson().fromJson(message, type);
@@ -200,7 +200,7 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
             showLoadingProgressDialog();
             setMqttSettings();
         }
-        if (msg_id == MQTTConstants03.READ_MSG_ID_MQTT_SETTINGS) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_MQTT_SETTINGS) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
             MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
@@ -225,7 +225,7 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
             lwtFragment.setTopic(result.data.get("lwt_topic").getAsString());
             lwtFragment.setPayload(result.data.get("lwt_payload").getAsString());
         }
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_MQTT_SETTINGS) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_MQTT_SETTINGS) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -278,7 +278,7 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
                 ToastUtils.showToast(this, "Set up failed");
             }
         }
-        if (msg_id == MQTTConstants03.NOTIFY_MSG_ID_MQTT_CERT_RESULT) {
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_MQTT_CERT_RESULT) {
             Type type = new TypeToken<MsgNotify<JsonObject>>() {
             }.getType();
             MsgNotify<JsonObject> result = new Gson().fromJson(message, type);
@@ -333,7 +333,7 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
 
 
     private void saveParams() {
-        if (!MQTTSupport03.getInstance().isConnected()) {
+        if (!MQTTSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
@@ -347,17 +347,17 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
     }
 
     private void getDeviceStatus() {
-        int msgId = MQTTConstants03.READ_MSG_ID_DEVICE_STATUS;
+        int msgId = MQTTConstants.READ_MSG_ID_DEVICE_STATUS;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
     private void setMqttSettings() {
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_MQTT_SETTINGS;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_MQTT_SETTINGS;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("security_type", sslFragment.getConnectMode());
         jsonObject.addProperty("host", mBind.etMqttHost.getText().toString());
@@ -377,7 +377,7 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
         jsonObject.addProperty("lwt_payload", lwtFragment.getPayload());
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -387,14 +387,14 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
         String caFileUrl = sslFragment.getCAUrl();
         String certFileUrl = sslFragment.getClientCertUrl();
         String keyFileUrl = sslFragment.getClientKeyUrl();
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_MQTT_CERT_FILE;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_MQTT_CERT_FILE;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("ca_url", caFileUrl);
         jsonObject.addProperty("client_cert_url", certFileUrl);
         jsonObject.addProperty("client_key_url", keyFileUrl);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -454,10 +454,10 @@ public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDevic
     }
 
     private void getMqttSettings() {
-        int msgId = MQTTConstants03.READ_MSG_ID_MQTT_SETTINGS;
+        int msgId = MQTTConstants.READ_MSG_ID_MQTT_SETTINGS;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }

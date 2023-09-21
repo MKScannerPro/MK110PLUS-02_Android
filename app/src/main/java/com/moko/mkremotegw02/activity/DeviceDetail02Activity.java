@@ -24,17 +24,17 @@ import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MQTTConstants03;
-import com.moko.support.remotegw03.MQTTSupport03;
-import com.moko.support.remotegw03.entity.BXPButtonInfo;
-import com.moko.support.remotegw03.entity.BleConnectedList;
-import com.moko.support.remotegw03.entity.MsgConfigResult;
-import com.moko.support.remotegw03.entity.MsgNotify;
-import com.moko.support.remotegw03.entity.MsgReadResult;
-import com.moko.support.remotegw03.entity.OtherDeviceInfo;
-import com.moko.support.remotegw03.event.DeviceModifyNameEvent;
-import com.moko.support.remotegw03.event.DeviceOnlineEvent;
-import com.moko.support.remotegw03.event.MQTTMessageArrivedEvent;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.support.remotegw02.entity.BXPButtonInfo;
+import com.moko.support.remotegw02.entity.BleConnectedList;
+import com.moko.support.remotegw02.entity.MsgConfigResult;
+import com.moko.support.remotegw02.entity.MsgNotify;
+import com.moko.support.remotegw02.entity.MsgReadResult;
+import com.moko.support.remotegw02.entity.OtherDeviceInfo;
+import com.moko.support.remotegw02.event.DeviceModifyNameEvent;
+import com.moko.support.remotegw02.event.DeviceOnlineEvent;
+import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.Subscribe;
@@ -115,7 +115,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
             e.printStackTrace();
             return;
         }
-        if (msg_id == MQTTConstants03.READ_MSG_ID_SCAN_CONFIG) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_SCAN_CONFIG) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
             MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
@@ -126,7 +126,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
             mScanSwitch = result.data.get("scan_switch").getAsInt() == 1;
             changeView();
         }
-        if (msg_id == MQTTConstants03.NOTIFY_MSG_ID_BLE_SCAN_RESULT) {
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_SCAN_RESULT) {
             Type type = new TypeToken<MsgNotify<List<JsonObject>>>() {
             }.getType();
             MsgNotify<List<JsonObject>> result = new Gson().fromJson(message, type);
@@ -138,7 +138,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
             mBind.tvScanDeviceTotal.setText(getString(R.string.scan_device_total, mScanDevices.size()));
             mAdapter.replaceData(mScanDevices);
         }
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_SCAN_CONFIG) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_SCAN_CONFIG) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -152,7 +152,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
                 ToastUtils.showToast(this, "Set up failed");
             }
         }
-        if (msg_id == MQTTConstants03.READ_MSG_ID_BLE_CONNECTED_LIST) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_BLE_CONNECTED_LIST) {
             Type type = new TypeToken<MsgReadResult<BleConnectedList>>() {
             }.getType();
             MsgReadResult<BleConnectedList> result = new Gson().fromJson(message, type);
@@ -175,7 +175,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
                 startActivity(intent);
             }
         }
-        if (msg_id == MQTTConstants03.NOTIFY_MSG_ID_BLE_BXP_BUTTON_INFO) {
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_BUTTON_INFO) {
             dismissLoadingProgressDialog();
             mHandler.removeMessages(0);
             Type type = new TypeToken<MsgNotify<BXPButtonInfo>>() {
@@ -196,7 +196,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
             mConnectedBXPButtonInfo.firmware_version = bxpButtonInfo.firmware_version;
             readBXPButtonStatus(bxpButtonInfo.mac);
         }
-        if (msg_id == MQTTConstants03.NOTIFY_MSG_ID_BLE_BXP_BUTTON_STATUS) {
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_BUTTON_STATUS) {
             dismissLoadingProgressDialog();
             mHandler.removeMessages(0);
             Type type = new TypeToken<MsgNotify<BXPButtonInfo>>() {
@@ -220,7 +220,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
             intent.putExtra(AppConstants.EXTRA_KEY_BXP_BUTTON_INFO, mConnectedBXPButtonInfo);
             startActivity(intent);
         }
-        if (msg_id == MQTTConstants03.NOTIFY_MSG_ID_BLE_OTHER_INFO) {
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_OTHER_INFO) {
             dismissLoadingProgressDialog();
             mHandler.removeMessages(0);
             Type type = new TypeToken<MsgNotify<OtherDeviceInfo>>() {
@@ -266,7 +266,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
 
     public void onDeviceSetting(View view) {
         if (isWindowLocked()) return;
-        if (!MQTTSupport03.getInstance().isConnected()) {
+        if (!MQTTSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
@@ -277,7 +277,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
 
     public void onPowerMeteringSetting(View view){
         if (isWindowLocked()) return;
-        if (!MQTTSupport03.getInstance().isConnected()) {
+        if (!MQTTSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
@@ -289,7 +289,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
     public void onScannerOptionSetting(View view) {
         if (isWindowLocked()) return;
         // 获取扫描过滤
-        if (!MQTTSupport03.getInstance().isConnected()) {
+        if (!MQTTSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
@@ -301,7 +301,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
     public void onScanSwitch(View view) {
         if (isWindowLocked()) return;
         // 切换扫描开关
-        if (!MQTTSupport03.getInstance().isConnected()) {
+        if (!MQTTSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
@@ -324,7 +324,7 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
     public void onManageBleDevices(View view) {
         if (isWindowLocked()) return;
         // 设置扫描间隔
-        if (!MQTTSupport03.getInstance().isConnected()) {
+        if (!MQTTSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
@@ -337,32 +337,32 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
     }
 
     private void getBleConnectedList() {
-        int msgId = MQTTConstants03.READ_MSG_ID_BLE_CONNECTED_LIST;
+        int msgId = MQTTConstants.READ_MSG_ID_BLE_CONNECTED_LIST;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
     private void getScanConfig() {
-        int msgId = MQTTConstants03.READ_MSG_ID_SCAN_CONFIG;
+        int msgId = MQTTConstants.READ_MSG_ID_SCAN_CONFIG;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
     private void setScanConfig() {
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_SCAN_CONFIG;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_SCAN_CONFIG;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("scan_switch", mScanSwitch ? 1 : 0);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -378,12 +378,12 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
     }
 
     private void getOtherInfo(String mac) {
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_BLE_OTHER_INFO;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_OTHER_INFO;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("mac", mac);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -399,12 +399,12 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
     }
 
     private void getBXPButtonInfo(String mac) {
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_BLE_BXP_BUTTON_INFO;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_BUTTON_INFO;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("mac", mac);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -420,12 +420,12 @@ public class DeviceDetail02Activity extends BaseActivity<ActivityDetail02Binding
     }
 
     private void getBXPButtonStatus(String mac) {
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_BLE_BXP_BUTTON_STATUS;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_BUTTON_STATUS;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("mac", mac);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }

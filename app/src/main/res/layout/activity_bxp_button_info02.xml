@@ -428,7 +428,33 @@ mode 3: long press, mode 4: Abnormal inactivity"
                     android:textColor="@color/white_ffffff"
                     android:textSize="15sp" />
             </LinearLayout>
+            <TextView
+                android:id="@+id/tvLedControl"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="1dp"
+                android:background="@color/white_ffffff"
+                android:drawableEnd="@drawable/arrow_right"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="LED control"
+                android:textColor="@color/black_333333"
+                android:textSize="15sp" />
 
+            <TextView
+                android:id="@+id/tvBuzzerControl"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="1dp"
+                android:background="@color/white_ffffff"
+                android:drawableEnd="@drawable/arrow_right"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="Buzzer control"
+                android:textColor="@color/black_333333"
+                android:textSize="15sp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -13,7 +13,6 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:clickable="true"
             android:onClick="onBack"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
@@ -25,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Settings for  Device"
+            android:text="Settings for Device"
             android:textColor="@color/white_ffffff"
             android:textSize="17sp" />
     </RelativeLayout>
@@ -45,8 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@color/white_ffffff"
-                android:clickable="true"
-                android:drawableRight="@drawable/arrow_right"
+                android:drawableEnd="@drawable/arrow_right"
                 android:gravity="center_vertical"
                 android:onClick="onWifiSettings"
                 android:paddingLeft="12dp"

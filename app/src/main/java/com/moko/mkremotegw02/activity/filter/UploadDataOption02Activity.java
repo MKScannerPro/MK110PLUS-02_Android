@@ -16,12 +16,12 @@ import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MQTTConstants03;
-import com.moko.support.remotegw03.MQTTSupport03;
-import com.moko.support.remotegw03.entity.MsgConfigResult;
-import com.moko.support.remotegw03.entity.MsgReadResult;
-import com.moko.support.remotegw03.event.DeviceOnlineEvent;
-import com.moko.support.remotegw03.event.MQTTMessageArrivedEvent;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.support.remotegw02.entity.MsgConfigResult;
+import com.moko.support.remotegw02.entity.MsgReadResult;
+import com.moko.support.remotegw02.event.DeviceOnlineEvent;
+import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.Subscribe;
@@ -73,7 +73,7 @@ public class UploadDataOption02Activity extends BaseActivity<ActivityUploadDataO
             e.printStackTrace();
             return;
         }
-        if (msg_id == MQTTConstants03.READ_MSG_ID_UPLOAD_DATA_OPTION) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_UPLOAD_DATA_OPTION) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
             MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
@@ -85,7 +85,7 @@ public class UploadDataOption02Activity extends BaseActivity<ActivityUploadDataO
             mBind.cbRawDataAdv.setChecked(result.data.get("adv_data").getAsInt() == 1);
             mBind.cbRawDataRsp.setChecked(result.data.get("rsp_data").getAsInt() == 1);
         }
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_UPLOAD_DATA_OPTION) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_UPLOAD_DATA_OPTION) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -111,24 +111,24 @@ public class UploadDataOption02Activity extends BaseActivity<ActivityUploadDataO
     }
 
     private void setUploadDataOption() {
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_UPLOAD_DATA_OPTION;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_UPLOAD_DATA_OPTION;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("timestamp", mBind.cbTimestamp.isChecked() ? 1 : 0);
         jsonObject.addProperty("adv_data", mBind.cbRawDataAdv.isChecked() ? 1 : 0);
         jsonObject.addProperty("rsp_data", mBind.cbRawDataRsp.isChecked() ? 1 : 0);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
     private void getUploadDataOption() {
-        int msgId = MQTTConstants03.READ_MSG_ID_UPLOAD_DATA_OPTION;
+        int msgId = MQTTConstants.READ_MSG_ID_UPLOAD_DATA_OPTION;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }

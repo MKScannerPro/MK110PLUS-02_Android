@@ -10,7 +10,7 @@ import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityAboutBinding;
 import com.moko.mkremotegw02.utils.ToastUtils;
 import com.moko.mkremotegw02.utils.Utils;
-import com.moko.support.remotegw03.event.MQTTConnectionCompleteEvent;
+import com.moko.support.remotegw02.event.MQTTConnectionCompleteEvent;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

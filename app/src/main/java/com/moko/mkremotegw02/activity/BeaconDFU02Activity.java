@@ -20,12 +20,12 @@ import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MQTTConstants03;
-import com.moko.support.remotegw03.MQTTSupport03;
-import com.moko.support.remotegw03.entity.MsgConfigResult;
-import com.moko.support.remotegw03.entity.MsgNotify;
-import com.moko.support.remotegw03.event.DeviceOnlineEvent;
-import com.moko.support.remotegw03.event.MQTTMessageArrivedEvent;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.support.remotegw02.entity.MsgConfigResult;
+import com.moko.support.remotegw02.entity.MsgNotify;
+import com.moko.support.remotegw02.event.DeviceOnlineEvent;
+import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.Subscribe;
@@ -80,7 +80,7 @@ public class BeaconDFU02Activity extends BaseActivity<ActivityBeaconDfu02Binding
             e.printStackTrace();
             return;
         }
-        if (msg_id == MQTTConstants03.NOTIFY_MSG_ID_BLE_DFU_PERCENT) {
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_DFU_PERCENT) {
             Type type = new TypeToken<MsgNotify<JsonObject>>() {
             }.getType();
             MsgNotify<JsonObject> result = new Gson().fromJson(message, type);
@@ -90,7 +90,7 @@ public class BeaconDFU02Activity extends BaseActivity<ActivityBeaconDfu02Binding
             if (!isFinishing() && mLoadingMessageDialog != null && mLoadingMessageDialog.isResumed())
                 mLoadingMessageDialog.setMessage(String.format("Beacon DFU process: %d%%", percent));
         }
-        if (msg_id == MQTTConstants03.NOTIFY_MSG_ID_BLE_DFU_RESULT) {
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_DFU_RESULT) {
             Type type = new TypeToken<MsgNotify<JsonObject>>() {
             }.getType();
             MsgNotify<JsonObject> result = new Gson().fromJson(message, type);
@@ -105,7 +105,7 @@ public class BeaconDFU02Activity extends BaseActivity<ActivityBeaconDfu02Binding
             setResult(RESULT_OK, intent);
             finish();
         }
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_BLE_DFU) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_BLE_DFU) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -115,8 +115,8 @@ public class BeaconDFU02Activity extends BaseActivity<ActivityBeaconDfu02Binding
             mHandler.removeMessages(0);
             showLoadingMessageDialog("Beacon DFU process: 0%", false);
         }
-        if (msg_id == MQTTConstants03.NOTIFY_MSG_ID_BLE_BXP_BUTTON_DISCONNECTED
-                || msg_id == MQTTConstants03.CONFIG_MSG_ID_BLE_DISCONNECT) {
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_BUTTON_DISCONNECTED
+                || msg_id == MQTTConstants.CONFIG_MSG_ID_BLE_DISCONNECT) {
             dismissLoadingProgressDialog();
             mHandler.removeMessages(0);
             Type type = new TypeToken<MsgNotify<JsonObject>>() {
@@ -146,7 +146,7 @@ public class BeaconDFU02Activity extends BaseActivity<ActivityBeaconDfu02Binding
             ToastUtils.showToast(this, "File URL error");
             return;
         }
-        if (!MQTTSupport03.getInstance().isConnected()) {
+        if (!MQTTSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
@@ -161,14 +161,14 @@ public class BeaconDFU02Activity extends BaseActivity<ActivityBeaconDfu02Binding
 
 
     private void setDFU(String firmwareFileUrlStr, String initDataFileUrlStr) {
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_BLE_DFU;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_DFU;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("mac", mBeaconMac);
         jsonObject.addProperty("firmware_url", firmwareFileUrlStr);
         jsonObject.addProperty("init_data_url", initDataFileUrlStr);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }

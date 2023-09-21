@@ -3,7 +3,7 @@ package com.moko.mkremotegw02.adapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.moko.mkremotegw02.R;
-import com.moko.support.remotegw03.entity.DeviceInfo;
+import com.moko.support.remotegw02.entity.DeviceInfo;
 
 public class DeviceInfo02Adapter extends BaseQuickAdapter<DeviceInfo, BaseViewHolder> {
     public DeviceInfo02Adapter() {

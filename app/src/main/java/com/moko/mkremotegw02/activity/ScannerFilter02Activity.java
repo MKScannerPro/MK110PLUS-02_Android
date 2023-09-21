@@ -14,11 +14,11 @@ import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityScannerFilter02Binding;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MokoSupport03;
-import com.moko.support.remotegw03.OrderTaskAssembler;
-import com.moko.support.remotegw03.entity.OrderCHAR;
-import com.moko.support.remotegw03.entity.ParamsKeyEnum;
-import com.moko.support.remotegw03.entity.ParamsLongKeyEnum;
+import com.moko.support.remotegw02.MokoSupport;
+import com.moko.support.remotegw02.OrderTaskAssembler;
+import com.moko.support.remotegw02.entity.OrderCHAR;
+import com.moko.support.remotegw02.entity.ParamsKeyEnum;
+import com.moko.support.remotegw02.entity.ParamsLongKeyEnum;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -51,7 +51,7 @@ public class ScannerFilter02Activity extends BaseActivity<ActivityScannerFilter0
             orderTasks.add(OrderTaskAssembler.getFilterRSSI());
             orderTasks.add(OrderTaskAssembler.getFilterMacRules());
             orderTasks.add(OrderTaskAssembler.getFilterNameRules());
-            MokoSupport03.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
     }
 
@@ -186,7 +186,7 @@ public class ScannerFilter02Activity extends BaseActivity<ActivityScannerFilter0
         orderTasks.add(OrderTaskAssembler.setFilterMacRules(filterMacAddress));
         orderTasks.add(OrderTaskAssembler.setFilterRelationship(7));
         orderTasks.add(OrderTaskAssembler.setFilterRSSI(rssi));
-        MokoSupport03.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 
     private boolean isParaError() {

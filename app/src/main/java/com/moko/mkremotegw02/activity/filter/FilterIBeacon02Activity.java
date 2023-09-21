@@ -17,12 +17,12 @@ import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MQTTConstants03;
-import com.moko.support.remotegw03.MQTTSupport03;
-import com.moko.support.remotegw03.entity.MsgConfigResult;
-import com.moko.support.remotegw03.entity.MsgReadResult;
-import com.moko.support.remotegw03.event.DeviceOnlineEvent;
-import com.moko.support.remotegw03.event.MQTTMessageArrivedEvent;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.support.remotegw02.entity.MsgConfigResult;
+import com.moko.support.remotegw02.entity.MsgReadResult;
+import com.moko.support.remotegw02.event.DeviceOnlineEvent;
+import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.Subscribe;
@@ -74,7 +74,7 @@ public class FilterIBeacon02Activity extends BaseActivity<ActivityFilterIbeacon0
             e.printStackTrace();
             return;
         }
-        if (msg_id == MQTTConstants03.READ_MSG_ID_FILTER_IBEACON) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_FILTER_IBEACON) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
             MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
@@ -89,7 +89,7 @@ public class FilterIBeacon02Activity extends BaseActivity<ActivityFilterIbeacon0
             mBind.etIbeaconMinorMin.setText(String.valueOf(result.data.get("min_minor").getAsInt()));
             mBind.etIbeaconMinorMax.setText(String.valueOf(result.data.get("max_minor").getAsInt()));
         }
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_FILTER_IBEACON) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_FILTER_IBEACON) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -115,10 +115,10 @@ public class FilterIBeacon02Activity extends BaseActivity<ActivityFilterIbeacon0
     }
 
     private void getFilterIBeacon() {
-        int msgId = MQTTConstants03.READ_MSG_ID_FILTER_IBEACON;
+        int msgId = MQTTConstants.READ_MSG_ID_FILTER_IBEACON;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -154,7 +154,7 @@ public class FilterIBeacon02Activity extends BaseActivity<ActivityFilterIbeacon0
             minorMin = Integer.parseInt(minorMinStr);
         if (!TextUtils.isEmpty(minorMaxStr))
             minorMax = Integer.parseInt(minorMaxStr);
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_FILTER_IBEACON;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_FILTER_IBEACON;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("switch_value", mBind.cbIbeacon.isChecked() ? 1 : 0);
         jsonObject.addProperty("min_major", majorMin);
@@ -164,7 +164,7 @@ public class FilterIBeacon02Activity extends BaseActivity<ActivityFilterIbeacon0
         jsonObject.addProperty("uuid", mBind.etIbeaconUuid.getText().toString());
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }

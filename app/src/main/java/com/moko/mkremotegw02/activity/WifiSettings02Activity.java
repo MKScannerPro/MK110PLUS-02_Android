@@ -20,11 +20,11 @@ import com.moko.mkremotegw02.databinding.ActivityWifiSettings02Binding;
 import com.moko.mkremotegw02.dialog.Bottom02Dialog;
 import com.moko.mkremotegw02.utils.FileUtils;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MokoSupport03;
-import com.moko.support.remotegw03.OrderTaskAssembler;
-import com.moko.support.remotegw03.entity.OrderCHAR;
-import com.moko.support.remotegw03.entity.ParamsKeyEnum;
-import com.moko.support.remotegw03.entity.ParamsLongKeyEnum;
+import com.moko.support.remotegw02.MokoSupport;
+import com.moko.support.remotegw02.OrderTaskAssembler;
+import com.moko.support.remotegw02.entity.OrderCHAR;
+import com.moko.support.remotegw02.entity.ParamsKeyEnum;
+import com.moko.support.remotegw02.entity.ParamsLongKeyEnum;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -45,14 +45,6 @@ public class WifiSettings02Activity extends BaseActivity<ActivityWifiSettings02B
     private String mCaPath;
     private String mCertPath;
     private String mKeyPath;
-    private final String[] countryBrand = {"United Arab Emirates", "Argentina", "American Samoa", "Austria", "Australia", "Barbados", "Burkina Faso", "Bermuda",
-            "Brazil", "Bahamas", "Canada", "Central African Republic", "Côte d'Ivoire", "China", "Colombia", "Costa Rica", "Cuba", "Christmas Island", "Dominica",
-            "Dominican Republic", "Ecuador", "Europe", "Micronesia, Federated States of", "France", "Grenada", "Ghana", "Greece", "Guatemala", "Guam", "Guyana", "Honduras",
-            "Haiti", "Jamaica", "Cayman Islands", "Kazakhstan", "Lebanon", "Sri Lanka", "Marshall Islands", "Mongolia", "Macao, SAR China", "Northern Mariana Islands",
-            "Mauritius", "Mexico", "Malaysia", "Nicaragua", "Panama", "Peru", "Papua New Guinea", "Philippines", "Puerto Rico", "Palau", "Paraguay", "Rwanda", "Singapore",
-            "Senegal", "El Salvador", "Syrian Arab Republic (Syria)", "Turks and Caicos Islands", "Thailand", "Trinidad and Tobago", "Taiwan, Republic of China",
-            "Tanzania, United Republic of", "Uganda", "United States of America", "Uruguay", "Venezuela (Bolivarian Republic)", "Virgin Islands,US", "Viet Nam", "Vanuatu"};
-    private int countrySelected;
 
     @Override
     protected void onCreate() {
@@ -85,14 +77,12 @@ public class WifiSettings02Activity extends BaseActivity<ActivityWifiSettings02B
             orderTasks.add(OrderTaskAssembler.getWifiSSID());
             orderTasks.add(OrderTaskAssembler.getWifiPassword());
             orderTasks.add(OrderTaskAssembler.getWifiEapType());
-            orderTasks.add(OrderTaskAssembler.getCountry());
             orderTasks.add(OrderTaskAssembler.getWifiEapUsername());
             orderTasks.add(OrderTaskAssembler.getWifiEapPassword());
             orderTasks.add(OrderTaskAssembler.getWifiEapDomainId());
             orderTasks.add(OrderTaskAssembler.getWifiEapVerifyServiceEnable());
-            MokoSupport03.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
-        mBind.tvCountryBrand.setOnClickListener(v -> onSelectCountry());
     }
 
     @Override
@@ -164,7 +154,6 @@ public class WifiSettings02Activity extends BaseActivity<ActivityWifiSettings02B
                                 case KEY_WIFI_EAP_VERIFY_SERVICE_ENABLE:
                                 case KEY_WIFI_PASSWORD:
                                 case KEY_UTC_TIME:
-                                case KEY_COUNTRY_BRAND:
                                     if (result != 1) {
                                         mSavedParamsError = true;
                                     }
@@ -245,14 +234,6 @@ public class WifiSettings02Activity extends BaseActivity<ActivityWifiSettings02B
                                     if (mSecuritySelected != 0 && mEAPTypeSelected != 2)
                                         mBind.llCa.setVisibility(mBind.cbVerifyServer.isChecked() ? View.VISIBLE : View.GONE);
                                     break;
-
-                                case KEY_COUNTRY_BRAND:
-                                    if (length == 1) {
-                                        countrySelected = value[4] & 0xff;
-                                        mBind.tvCountryBrand.setText(countryBrand[countrySelected]);
-                                    }
-                                    break;
-
                             }
                         }
                     }
@@ -290,17 +271,6 @@ public class WifiSettings02Activity extends BaseActivity<ActivityWifiSettings02B
                 mBind.llCert.setVisibility(mEAPTypeSelected == 2 ? View.VISIBLE : View.GONE);
                 mBind.llKey.setVisibility(mEAPTypeSelected == 2 ? View.VISIBLE : View.GONE);
             }
-        });
-        dialog.show(getSupportFragmentManager());
-    }
-
-    private void onSelectCountry() {
-        if (isWindowLocked()) return;
-        Bottom02Dialog dialog = new Bottom02Dialog();
-        dialog.setDatas(new ArrayList<>(Arrays.asList(countryBrand)), countrySelected);
-        dialog.setListener(value -> {
-            countrySelected = value;
-            mBind.tvCountryBrand.setText(countryBrand[value]);
         });
         dialog.show(getSupportFragmentManager());
     }
@@ -419,9 +389,8 @@ public class WifiSettings02Activity extends BaseActivity<ActivityWifiSettings02B
                 //同步时间
                 orderTasks.add(OrderTaskAssembler.setUtcTime());
             }
-            orderTasks.add(OrderTaskAssembler.setCountryBrand(countrySelected));
             orderTasks.add(OrderTaskAssembler.setWifiEapType(mEAPTypeSelected));
-            MokoSupport03.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         } catch (Exception e) {
             ToastUtils.showToast(this, "File is missing");
         }

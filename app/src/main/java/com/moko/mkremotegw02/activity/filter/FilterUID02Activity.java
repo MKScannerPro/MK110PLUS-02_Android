@@ -16,12 +16,12 @@ import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MQTTConstants03;
-import com.moko.support.remotegw03.MQTTSupport03;
-import com.moko.support.remotegw03.entity.MsgConfigResult;
-import com.moko.support.remotegw03.entity.MsgReadResult;
-import com.moko.support.remotegw03.event.DeviceOnlineEvent;
-import com.moko.support.remotegw03.event.MQTTMessageArrivedEvent;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.support.remotegw02.entity.MsgConfigResult;
+import com.moko.support.remotegw02.entity.MsgReadResult;
+import com.moko.support.remotegw02.event.DeviceOnlineEvent;
+import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.Subscribe;
@@ -69,7 +69,7 @@ public class FilterUID02Activity extends BaseActivity<ActivityFilterUid02Binding
             e.printStackTrace();
             return;
         }
-        if (msg_id == MQTTConstants03.READ_MSG_ID_FILTER_UID) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_FILTER_UID) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
             MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
@@ -80,7 +80,7 @@ public class FilterUID02Activity extends BaseActivity<ActivityFilterUid02Binding
             mBind.etUidNamespace.setText(result.data.get("namespace").getAsString());
             mBind.etUidInstanceId.setText(result.data.get("instance").getAsString());
         }
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_FILTER_UID) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_FILTER_UID) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -101,10 +101,10 @@ public class FilterUID02Activity extends BaseActivity<ActivityFilterUid02Binding
     }
 
     private void getFilterUid() {
-        int msgId = MQTTConstants03.READ_MSG_ID_FILTER_UID;
+        int msgId = MQTTConstants.READ_MSG_ID_FILTER_UID;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -127,14 +127,14 @@ public class FilterUID02Activity extends BaseActivity<ActivityFilterUid02Binding
     }
 
     private void saveParams() {
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_FILTER_UID;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_FILTER_UID;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("switch_value", mBind.cbUid.isChecked() ? 1 : 0);
         jsonObject.addProperty("namespace", mBind.etUidNamespace.getText().toString());
         jsonObject.addProperty("instance", mBind.etUidInstanceId.getText().toString());
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }

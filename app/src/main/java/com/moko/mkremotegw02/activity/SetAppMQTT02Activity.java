@@ -22,15 +22,15 @@ import com.moko.mkremotegw02.databinding.ActivityMqttApp02Binding;
 import com.moko.mkremotegw02.dialog.AlertMessageDialog;
 import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.fragment.General02Fragment;
-import com.moko.mkremotegw02.fragment.SSL03Fragment;
-import com.moko.mkremotegw02.fragment.User03Fragment;
+import com.moko.mkremotegw02.fragment.SSL02Fragment;
+import com.moko.mkremotegw02.fragment.User02Fragment;
 import com.moko.mkremotegw02.utils.FileUtils;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.mkremotegw02.utils.ToastUtils;
 import com.moko.mkremotegw02.utils.Utils;
-import com.moko.support.remotegw03.MQTTSupport03;
-import com.moko.support.remotegw03.event.MQTTConnectionCompleteEvent;
-import com.moko.support.remotegw03.event.MQTTConnectionFailureEvent;
+import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.support.remotegw02.event.MQTTConnectionCompleteEvent;
+import com.moko.support.remotegw02.event.MQTTConnectionFailureEvent;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -55,8 +55,8 @@ import java.util.UUID;
 public class SetAppMQTT02Activity extends BaseActivity<ActivityMqttApp02Binding> implements RadioGroup.OnCheckedChangeListener {
     private final String FILTER_ASCII = "[ -~]*";
     private General02Fragment generalFragment;
-    private User03Fragment userFragment;
-    private SSL03Fragment sslFragment;
+    private User02Fragment userFragment;
+    private SSL02Fragment sslFragment;
     private ArrayList<Fragment> fragments;
     private MQTTConfig mqttConfig;
     private String expertFilePath;
@@ -116,8 +116,8 @@ public class SetAppMQTT02Activity extends BaseActivity<ActivityMqttApp02Binding>
     private void createFragment() {
         fragments = new ArrayList<>();
         generalFragment = General02Fragment.newInstance();
-        userFragment = User03Fragment.newInstance();
-        sslFragment = SSL03Fragment.newInstance();
+        userFragment = User02Fragment.newInstance();
+        sslFragment = SSL02Fragment.newInstance();
         fragments.add(generalFragment);
         fragments.add(userFragment);
         fragments.add(sslFragment);
@@ -196,11 +196,11 @@ public class SetAppMQTT02Activity extends BaseActivity<ActivityMqttApp02Binding>
         if (isParaError()) return;
         String mqttConfigStr = new Gson().toJson(mqttConfig, MQTTConfig.class);
         SPUtiles.setStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, mqttConfigStr);
-        MQTTSupport03.getInstance().disconnectMqtt();
+        MQTTSupport.getInstance().disconnectMqtt();
         showLoadingProgressDialog();
         mBind.etMqttHost.postDelayed(() -> {
             try {
-                MQTTSupport03.getInstance().connectMqtt(mqttConfigStr);
+                MQTTSupport.getInstance().connectMqtt(mqttConfigStr);
             } catch (FileNotFoundException e) {
                 dismissLoadingProgressDialog();
                 ToastUtils.showToast(this, "The SSL certificates path is invalid, please select a valid file path and save it.");

@@ -17,12 +17,12 @@ import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MQTTConstants03;
-import com.moko.support.remotegw03.MQTTSupport03;
-import com.moko.support.remotegw03.entity.MsgConfigResult;
-import com.moko.support.remotegw03.entity.MsgReadResult;
-import com.moko.support.remotegw03.event.DeviceOnlineEvent;
-import com.moko.support.remotegw03.event.MQTTMessageArrivedEvent;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.support.remotegw02.entity.MsgConfigResult;
+import com.moko.support.remotegw02.entity.MsgReadResult;
+import com.moko.support.remotegw02.event.DeviceOnlineEvent;
+import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.Subscribe;
@@ -76,7 +76,7 @@ public class IndicatorSetting02Activity extends BaseActivity<ActivityIndicatorSe
             e.printStackTrace();
             return;
         }
-        if (msg_id == MQTTConstants03.READ_MSG_ID_INDICATOR_STATUS) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_INDICATOR_STATUS) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
             MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
@@ -93,7 +93,7 @@ public class IndicatorSetting02Activity extends BaseActivity<ActivityIndicatorSe
             mBind.cbServerConnecting.setChecked(serverConnectingEnable == 1);
             mBind.cbServerConnected.setChecked(serverConnectedEnable == 1);
         }
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_INDICATOR_STATUS) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_INDICATOR_STATUS) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -120,7 +120,7 @@ public class IndicatorSetting02Activity extends BaseActivity<ActivityIndicatorSe
 
 
     private void setIndicatorStatus() {
-        int msgId = MQTTConstants03.CONFIG_MSG_ID_INDICATOR_STATUS;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_INDICATOR_STATUS;
         bleBroadcastEnable = mBind.cbBleBroadcast.isChecked() ? 1 : 0;
         bleConnectedEnable = mBind.cbBleConnected.isChecked() ? 1 : 0;
         serverConnectingEnable = mBind.cbServerConnecting.isChecked() ? 1 : 0;
@@ -132,17 +132,17 @@ public class IndicatorSetting02Activity extends BaseActivity<ActivityIndicatorSe
         jsonObject.addProperty("server_connected_led", serverConnectedEnable);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
     private void getIndicatorStatus() {
-        int msgId = MQTTConstants03.READ_MSG_ID_INDICATOR_STATUS;
+        int msgId = MQTTConstants.READ_MSG_ID_INDICATOR_STATUS;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -150,7 +150,7 @@ public class IndicatorSetting02Activity extends BaseActivity<ActivityIndicatorSe
 
     public void onSave(View view) {
         if (isWindowLocked()) return;
-        if (!MQTTSupport03.getInstance().isConnected()) {
+        if (!MQTTSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }

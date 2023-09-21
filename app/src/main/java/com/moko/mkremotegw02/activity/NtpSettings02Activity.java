@@ -12,10 +12,10 @@ import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityNtpSettings02Binding;
 import com.moko.mkremotegw02.dialog.Bottom02Dialog;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MokoSupport03;
-import com.moko.support.remotegw03.OrderTaskAssembler;
-import com.moko.support.remotegw03.entity.OrderCHAR;
-import com.moko.support.remotegw03.entity.ParamsKeyEnum;
+import com.moko.support.remotegw02.MokoSupport;
+import com.moko.support.remotegw02.OrderTaskAssembler;
+import com.moko.support.remotegw02.entity.OrderCHAR;
+import com.moko.support.remotegw02.entity.ParamsKeyEnum;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -65,7 +65,7 @@ public class NtpSettings02Activity extends BaseActivity<ActivityNtpSettings02Bin
             List<OrderTask> orderTasks = new ArrayList<>();
             orderTasks.add(OrderTaskAssembler.getNtpUrl());
             orderTasks.add(OrderTaskAssembler.getTimezone());
-            MokoSupport03.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
     }
 
@@ -171,7 +171,7 @@ public class NtpSettings02Activity extends BaseActivity<ActivityNtpSettings02Bin
         List<OrderTask> orderTasks = new ArrayList<>();
         orderTasks.add(OrderTaskAssembler.setNtpUrl(ntpServer));
         orderTasks.add(OrderTaskAssembler.setTimezone(mSelected - 24));
-        MokoSupport03.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+        MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
     }
 
     public void onBack(View view) {

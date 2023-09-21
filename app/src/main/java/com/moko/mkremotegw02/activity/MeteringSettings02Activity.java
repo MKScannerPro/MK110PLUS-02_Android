@@ -22,15 +22,15 @@ import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MQTTConstants03;
-import com.moko.support.remotegw03.MQTTSupport03;
-import com.moko.support.remotegw03.MokoSupport03;
-import com.moko.support.remotegw03.OrderTaskAssembler;
-import com.moko.support.remotegw03.entity.MsgConfigResult;
-import com.moko.support.remotegw03.entity.MsgReadResult;
-import com.moko.support.remotegw03.entity.OrderCHAR;
-import com.moko.support.remotegw03.entity.ParamsKeyEnum;
-import com.moko.support.remotegw03.event.MQTTMessageArrivedEvent;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.support.remotegw02.MokoSupport;
+import com.moko.support.remotegw02.OrderTaskAssembler;
+import com.moko.support.remotegw02.entity.MsgConfigResult;
+import com.moko.support.remotegw02.entity.MsgReadResult;
+import com.moko.support.remotegw02.entity.OrderCHAR;
+import com.moko.support.remotegw02.entity.ParamsKeyEnum;
+import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.Subscribe;
@@ -71,7 +71,7 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
                 orderTasks.add(OrderTaskAssembler.getLoadDetectionNotifyEnable());
                 orderTasks.add(OrderTaskAssembler.getPowerReportInterval());
                 orderTasks.add(OrderTaskAssembler.getEnergyReportInterval());
-                MokoSupport03.getInstance().sendOrder(orderTasks.toArray(new OrderTask[0]));
+                MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[0]));
             }, 500);
         } else {
             String mqttConfigAppStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
@@ -216,12 +216,12 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
             e.printStackTrace();
             return;
         }
-        if (msg_id == MQTTConstants03.READ_MSG_ID_LOAD_CHANGE_ENABLE || msg_id == MQTTConstants03.NOTIFY_MSG_ID_LOAD_CHANGE_ENABLE) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_LOAD_CHANGE_ENABLE || msg_id == MQTTConstants.NOTIFY_MSG_ID_LOAD_CHANGE_ENABLE) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
             MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
             if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
-            String key = msg_id == MQTTConstants03.READ_MSG_ID_LOAD_CHANGE_ENABLE ? "switch_value" : "load_state";
+            String key = msg_id == MQTTConstants.READ_MSG_ID_LOAD_CHANGE_ENABLE ? "switch_value" : "load_state";
             int enable = result.data.get(key).getAsInt();
             if (enable == 0) {
                 dismissLoadingProgressDialog();
@@ -231,7 +231,7 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
             getPowerReportInterval();
             getEnergyReportInterval();
         }
-        if (msg_id == MQTTConstants03.READ_MSG_ID_POWER_REPORT_INTERVAL || msg_id == MQTTConstants03.READ_MSG_ID_ENERGY_REPORT_INTERVAL) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_POWER_REPORT_INTERVAL || msg_id == MQTTConstants.READ_MSG_ID_ENERGY_REPORT_INTERVAL) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
             MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
@@ -239,17 +239,17 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
             int interval = result.data.get("interval").getAsInt();
             dismissLoadingProgressDialog();
             mHandler.removeMessages(0);
-            if (msg_id == MQTTConstants03.READ_MSG_ID_POWER_REPORT_INTERVAL) {
+            if (msg_id == MQTTConstants.READ_MSG_ID_POWER_REPORT_INTERVAL) {
                 mBind.etPowerInterval.setText(String.valueOf(interval));
                 mBind.etPowerInterval.setSelection(mBind.etPowerInterval.getText().length());
             }
-            if (msg_id == MQTTConstants03.READ_MSG_ID_ENERGY_REPORT_INTERVAL) {
+            if (msg_id == MQTTConstants.READ_MSG_ID_ENERGY_REPORT_INTERVAL) {
                 mBind.etEnergyInterval.setText(String.valueOf(interval));
                 mBind.etEnergyInterval.setSelection(mBind.etEnergyInterval.getText().length());
             }
         }
 
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_POWER_METERING_ENABLE) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_POWER_METERING_ENABLE) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -261,7 +261,7 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
             } else {
                 //打开状态 继续设置负载开关的状态
                 if (result.result_code == 0) {
-                    setMeteringEnable(mBind.cbDetectionNotify.isChecked() ? 1 : 0, MQTTConstants03.CONFIG_MSG_ID_LOAD_CHANGE_ENABLE);
+                    setMeteringEnable(mBind.cbDetectionNotify.isChecked() ? 1 : 0, MQTTConstants.CONFIG_MSG_ID_LOAD_CHANGE_ENABLE);
                 } else {
                     ToastUtils.showToast(this, "Set up failed");
                     dismissLoadingProgressDialog();
@@ -269,33 +269,33 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
                 }
             }
         }
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_LOAD_CHANGE_ENABLE) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_LOAD_CHANGE_ENABLE) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
             if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
             if (result.result_code == 0) {
-                setPowerEnergyReportInterval(MQTTConstants03.CONFIG_MSG_ID_POWER_REPORT_INTERVAL, Integer.parseInt(mBind.etPowerInterval.getText().toString()));
+                setPowerEnergyReportInterval(MQTTConstants.CONFIG_MSG_ID_POWER_REPORT_INTERVAL, Integer.parseInt(mBind.etPowerInterval.getText().toString()));
             } else {
                 ToastUtils.showToast(this, "Set up failed");
                 dismissLoadingProgressDialog();
                 mHandler.removeMessages(0);
             }
         }
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_POWER_REPORT_INTERVAL) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_POWER_REPORT_INTERVAL) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
             if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
             if (result.result_code == 0) {
-                setPowerEnergyReportInterval(MQTTConstants03.CONFIG_MSG_ID_ENERGY_REPORT_INTERVAL, Integer.parseInt(mBind.etEnergyInterval.getText().toString()));
+                setPowerEnergyReportInterval(MQTTConstants.CONFIG_MSG_ID_ENERGY_REPORT_INTERVAL, Integer.parseInt(mBind.etEnergyInterval.getText().toString()));
             } else {
                 ToastUtils.showToast(this, "Set up failed");
                 dismissLoadingProgressDialog();
                 mHandler.removeMessages(0);
             }
         }
-        if (msg_id == MQTTConstants03.CONFIG_MSG_ID_ENERGY_REPORT_INTERVAL) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_ENERGY_REPORT_INTERVAL) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -311,27 +311,27 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
         jsonObject.addProperty("interval", interval);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
     private void getPowerReportInterval() {
-        int msgId = MQTTConstants03.READ_MSG_ID_POWER_REPORT_INTERVAL;
+        int msgId = MQTTConstants.READ_MSG_ID_POWER_REPORT_INTERVAL;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
     }
 
     private void getEnergyReportInterval() {
-        int msgId = MQTTConstants03.READ_MSG_ID_ENERGY_REPORT_INTERVAL;
+        int msgId = MQTTConstants.READ_MSG_ID_ENERGY_REPORT_INTERVAL;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -343,10 +343,10 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
             finish();
         }, 30 * 1000);
         showLoadingProgressDialog();
-        int msgId = MQTTConstants03.READ_MSG_ID_LOAD_CHANGE_ENABLE;
+        int msgId = MQTTConstants.READ_MSG_ID_LOAD_CHANGE_ENABLE;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -358,7 +358,7 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
             //蓝牙
             if (!mBind.cbMetering.isChecked()) {
                 showLoadingProgressDialog();
-                MokoSupport03.getInstance().sendOrder(OrderTaskAssembler.setMeteringReportEnable(0));
+                MokoSupport.getInstance().sendOrder(OrderTaskAssembler.setMeteringReportEnable(0));
             } else {
                 List<OrderTask> orderTasks = new ArrayList<>(4);
                 orderTasks.add(OrderTaskAssembler.setMeteringReportEnable(1));
@@ -372,23 +372,23 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
                 orderTasks.add(OrderTaskAssembler.setLoadDetectionNotifyEnable(mBind.cbDetectionNotify.isChecked() ? 1 : 0));
                 orderTasks.add(OrderTaskAssembler.setPowerReportInterval(powerInterval));
                 orderTasks.add(OrderTaskAssembler.setEnergyReportInterval(energyInterval));
-                MokoSupport03.getInstance().sendOrder(orderTasks.toArray(new OrderTask[0]));
+                MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[0]));
             }
         } else {
             if (!mBind.cbMetering.isChecked()) {
-                setMeteringEnable(0, MQTTConstants03.CONFIG_MSG_ID_POWER_METERING_ENABLE);
+                setMeteringEnable(0, MQTTConstants.CONFIG_MSG_ID_POWER_METERING_ENABLE);
             } else {
                 if (!isValid()) {
                     ToastUtils.showToast(this, "Para Error");
                     return;
                 }
-                setMeteringEnable(1, MQTTConstants03.CONFIG_MSG_ID_POWER_METERING_ENABLE);
+                setMeteringEnable(1, MQTTConstants.CONFIG_MSG_ID_POWER_METERING_ENABLE);
             }
         }
     }
 
     private void setMeteringEnable(int enable, int msgId) {
-        if (msgId == MQTTConstants03.CONFIG_MSG_ID_POWER_METERING_ENABLE) {
+        if (msgId == MQTTConstants.CONFIG_MSG_ID_POWER_METERING_ENABLE) {
             mHandler.postDelayed(() -> {
                 dismissLoadingProgressDialog();
                 finish();
@@ -399,7 +399,7 @@ public class MeteringSettings02Activity extends BaseActivity<ActivityMeteringSet
         jsonObject.addProperty("switch_value", enable);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
-            MQTTSupport03.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
             e.printStackTrace();
         }

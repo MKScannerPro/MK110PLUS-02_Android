@@ -27,16 +27,16 @@ import com.moko.mkremotegw02.dialog.AlertMessageDialog;
 import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.fragment.GeneralDevice02Fragment;
 import com.moko.mkremotegw02.fragment.LWT02Fragment;
-import com.moko.mkremotegw02.fragment.SSLDevice03Fragment;
-import com.moko.mkremotegw02.fragment.UserDevice03Fragment;
+import com.moko.mkremotegw02.fragment.SSLDevice02Fragment;
+import com.moko.mkremotegw02.fragment.UserDevice02Fragment;
 import com.moko.mkremotegw02.utils.FileUtils;
 import com.moko.mkremotegw02.utils.ToastUtils;
 import com.moko.mkremotegw02.utils.Utils;
-import com.moko.support.remotegw03.MokoSupport03;
-import com.moko.support.remotegw03.OrderTaskAssembler;
-import com.moko.support.remotegw03.entity.OrderCHAR;
-import com.moko.support.remotegw03.entity.ParamsKeyEnum;
-import com.moko.support.remotegw03.entity.ParamsLongKeyEnum;
+import com.moko.support.remotegw02.MokoSupport;
+import com.moko.support.remotegw02.OrderTaskAssembler;
+import com.moko.support.remotegw02.entity.OrderCHAR;
+import com.moko.support.remotegw02.entity.ParamsKeyEnum;
+import com.moko.support.remotegw02.entity.ParamsLongKeyEnum;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -56,8 +56,8 @@ import java.util.Arrays;
 public class MqttSettings02Activity extends BaseActivity<ActivityMqttDevice02Binding> implements RadioGroup.OnCheckedChangeListener {
     private final String FILTER_ASCII = "[ -~]*";
     private GeneralDevice02Fragment generalFragment;
-    private UserDevice03Fragment userFragment;
-    private SSLDevice03Fragment sslFragment;
+    private UserDevice02Fragment userFragment;
+    private SSLDevice02Fragment sslFragment;
     private LWT02Fragment lwtFragment;
     private ArrayList<Fragment> fragments;
     private MQTTConfig mqttDeviceConfig;
@@ -124,7 +124,7 @@ public class MqttSettings02Activity extends BaseActivity<ActivityMqttDevice02Bin
             orderTasks.add(OrderTaskAssembler.getMQTTLwtQos());
             orderTasks.add(OrderTaskAssembler.getMQTTLwtTopic());
             orderTasks.add(OrderTaskAssembler.getMQTTLwtPayload());
-            MokoSupport03.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         }, 500);
     }
 
@@ -326,8 +326,8 @@ public class MqttSettings02Activity extends BaseActivity<ActivityMqttDevice02Bin
     private void createFragment() {
         fragments = new ArrayList<>();
         generalFragment = GeneralDevice02Fragment.newInstance();
-        userFragment = UserDevice03Fragment.newInstance();
-        sslFragment = SSLDevice03Fragment.newInstance();
+        userFragment = UserDevice02Fragment.newInstance();
+        sslFragment = SSLDevice02Fragment.newInstance();
         lwtFragment = LWT02Fragment.newInstance();
         fragments.add(generalFragment);
         fragments.add(userFragment);
@@ -489,7 +489,7 @@ public class MqttSettings02Activity extends BaseActivity<ActivityMqttDevice02Bin
                 File caFile = new File(mqttDeviceConfig.caPath);
                 orderTasks.add(OrderTaskAssembler.setCA(caFile));
             }
-            MokoSupport03.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
+            MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
         } catch (Exception e) {
             ToastUtils.showToast(this, "File is missing");
         }

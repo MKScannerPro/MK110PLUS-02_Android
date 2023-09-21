@@ -13,10 +13,10 @@ import com.google.gson.JsonObject;
 import com.moko.mkremotegw02.activity.GuideActivity;
 import com.moko.mkremotegw02.dialog.LoadingDialog;
 import com.moko.mkremotegw02.dialog.LoadingMessageDialog;
-import com.moko.support.remotegw03.entity.MsgConfigReq;
-import com.moko.support.remotegw03.entity.MsgDeviceInfo;
-import com.moko.support.remotegw03.entity.MsgReadReq;
-import com.moko.support.remotegw03.event.DeviceOnlineEvent;
+import com.moko.support.remotegw02.entity.MsgConfigReq;
+import com.moko.support.remotegw02.entity.MsgDeviceInfo;
+import com.moko.support.remotegw02.entity.MsgReadReq;
+import com.moko.support.remotegw02.event.DeviceOnlineEvent;
 
 import org.greenrobot.eventbus.EventBus;
 

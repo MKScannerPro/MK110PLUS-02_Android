@@ -11,14 +11,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.moko.mkremotegw02.base.BaseActivity;
-import com.moko.mkremotegw02.databinding.FragmentLwt03Binding;
+import com.moko.mkremotegw02.databinding.FragmentLwt02Binding;
 import com.moko.mkremotegw02.utils.ToastUtils;
 
 public class LWT02Fragment extends Fragment {
     private static final String TAG = LWT02Fragment.class.getSimpleName();
     private final String FILTER_ASCII = "[ -~]*";
-    private FragmentLwt03Binding mBind;
+    private FragmentLwt02Binding mBind;
     private boolean lwtEnable;
     private boolean lwtRetain;
     private int qos;
@@ -42,7 +41,7 @@ public class LWT02Fragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: ");
-        mBind = FragmentLwt03Binding.inflate(inflater, container, false);
+        mBind = FragmentLwt02Binding.inflate(inflater, container, false);
         InputFilter filter = (source, start, end, dest, dstart, dend) -> {
             if (!(source + "").matches(FILTER_ASCII)) {
                 return "";

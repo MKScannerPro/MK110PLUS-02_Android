@@ -448,48 +448,6 @@
                     android:onClick="selectKeyFile"
                     android:src="@drawable/select_file" />
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layoutCountry"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/ll_key">
-
-                <TextView
-                    android:layout_width="0px"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/country_brand"
-                    android:textColor="@color/black_333333"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/tvCountryBrand"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/shape_radius_blue_btn_bg"
-                    android:gravity="center"
-                    android:minWidth="170dp"
-                    android:minHeight="40dp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    tools:text="United States of America"
-                    android:textColor="@color/white_ffffff"
-                    android:textSize="15sp" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Please note the country\u0026Band is a configuration for 5GHZ WiFi,if using 2.4GHz WiFi, there is no need to choose the band."
-                android:textColor="@color/black_333333"
-                android:textSize="13sp"
-                android:lineSpacingMultiplier="1.2"
-                app:layout_constraintTop_toBottomOf="@id/layoutCountry" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </LinearLayout>

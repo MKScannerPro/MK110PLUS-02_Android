@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.moko.mkremotegw02.R;
-import com.moko.support.remotegw03.entity.BleDevice;
+import com.moko.support.remotegw02.entity.BleDevice;
 
 import java.util.Locale;
 

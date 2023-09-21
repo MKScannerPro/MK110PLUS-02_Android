@@ -21,6 +21,7 @@ import com.moko.ble.lib.event.OrderTaskResponseEvent;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.mkremotegw02.AppConstants;
 import com.moko.mkremotegw02.R;
+import com.moko.mkremotegw02.activity.set.AdvertiseIBeacon02Activity;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityDeviceConfig02Binding;
 import com.moko.mkremotegw02.db.DBTools02;
@@ -29,14 +30,14 @@ import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw03.MQTTConstants03;
-import com.moko.support.remotegw03.MQTTSupport03;
-import com.moko.support.remotegw03.MokoSupport03;
-import com.moko.support.remotegw03.OrderTaskAssembler;
-import com.moko.support.remotegw03.entity.MsgNotify;
-import com.moko.support.remotegw03.entity.OrderCHAR;
-import com.moko.support.remotegw03.entity.ParamsKeyEnum;
-import com.moko.support.remotegw03.event.MQTTMessageArrivedEvent;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.support.remotegw02.MokoSupport;
+import com.moko.support.remotegw02.OrderTaskAssembler;
+import com.moko.support.remotegw02.entity.MsgNotify;
+import com.moko.support.remotegw02.entity.OrderCHAR;
+import com.moko.support.remotegw02.entity.ParamsKeyEnum;
+import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.EventBus;
@@ -142,7 +143,7 @@ public class DeviceConfig02Activity extends BaseActivity<ActivityDeviceConfig02B
             e.printStackTrace();
             return;
         }
-        if (msg_id != MQTTConstants03.NOTIFY_MSG_ID_NETWORKING_STATUS) return;
+        if (msg_id != MQTTConstants.NOTIFY_MSG_ID_NETWORKING_STATUS) return;
         Type type = new TypeToken<MsgNotify<Object>>() {
         }.getType();
         MsgNotify<Object> msgNotify = new Gson().fromJson(message, type);
@@ -201,7 +202,7 @@ public class DeviceConfig02Activity extends BaseActivity<ActivityDeviceConfig02B
     }
 
     private void back() {
-        MokoSupport03.getInstance().disConnectBle();
+        MokoSupport.getInstance().disConnectBle();
     }
 
     public void onAdvertiseIBeacon(View view){
@@ -257,7 +258,7 @@ public class DeviceConfig02Activity extends BaseActivity<ActivityDeviceConfig02B
             return;
         }
         showLoadingProgressDialog();
-        MokoSupport03.getInstance().sendOrder(OrderTaskAssembler.exitConfigMode());
+        MokoSupport.getInstance().sendOrder(OrderTaskAssembler.exitConfigMode());
     }
 
     private final ActivityResultLauncher<Intent> startWIFISettings = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -320,7 +321,7 @@ public class DeviceConfig02Activity extends BaseActivity<ActivityDeviceConfig02B
         // 订阅
         try {
             if (TextUtils.isEmpty(mAppMqttConfig.topicSubscribe)) {
-                MQTTSupport03.getInstance().subscribe(mDeviceMqttConfig.topicPublish, mAppMqttConfig.qos);
+                MQTTSupport.getInstance().subscribe(mDeviceMqttConfig.topicPublish, mAppMqttConfig.qos);
             }
         } catch (MqttException e) {
             e.printStackTrace();
@@ -330,7 +331,7 @@ public class DeviceConfig02Activity extends BaseActivity<ActivityDeviceConfig02B
             if (mDeviceMqttConfig.lwtEnable
                     && !TextUtils.isEmpty(mDeviceMqttConfig.lwtTopic)
                     && !mDeviceMqttConfig.lwtTopic.equals(mDeviceMqttConfig.topicPublish)) {
-                MQTTSupport03.getInstance().subscribe(mDeviceMqttConfig.lwtTopic, mAppMqttConfig.qos);
+                MQTTSupport.getInstance().subscribe(mDeviceMqttConfig.lwtTopic, mAppMqttConfig.qos);
             }
         } catch (MqttException e) {
             e.printStackTrace();

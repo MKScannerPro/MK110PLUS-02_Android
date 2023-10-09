@@ -27,7 +27,6 @@ import com.moko.mkremotegw02.activity.set.ModifySettings02Activity;
 import com.moko.mkremotegw02.adapter.Device02Adapter;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityMainRemoteWithMetering02Binding;
-import com.moko.mkremotegw02.databinding.ActivityMainRemoteWithMeteringBinding;
 import com.moko.mkremotegw02.db.DBTools02;
 import com.moko.mkremotegw02.dialog.AlertMessageDialog;
 import com.moko.mkremotegw02.entity.MQTTConfig;
@@ -365,8 +364,7 @@ public class RemoteMainWithMetering02Activity extends BaseActivity<ActivityMainR
                 e.printStackTrace();
             }
         } else {
-            if (devices.isEmpty())
-                return;
+            if (devices.isEmpty()) return;
             for (MokoDevice device : devices) {
                 try {
                     // 订阅设备发布主题

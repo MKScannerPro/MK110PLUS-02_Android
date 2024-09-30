@@ -12,7 +12,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="MKRemoteGW02"
-        android:theme="@style/LaunchActivityTheme">
+        android:theme="@style/LaunchActivityTheme"
+        android:usesCleartextTraffic="true">
 
         <activity
             android:name="com.moko.mkremotegw02.activity.GuideActivity"
@@ -277,6 +278,11 @@
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"/>
+        <activity
+            android:name="com.moko.mkremotegw02.activity.SyncDeviceActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
 
         <service android:name="com.moko.mkremotegw02.service.DfuService" />
         <provider

@@ -16,4 +16,6 @@ public class MokoDevice implements Serializable {
     public boolean isOnline;
     public int deviceType;
     public int wifiRssi;
+    public int networkType;
+    public boolean isSelected;
 }

@@ -71,18 +71,26 @@ public class Utils {
             intent.putExtra(Intent.EXTRA_TEXT, body);
         } else {
             ArrayList<Uri> uris = new ArrayList<>();
+            ArrayList<CharSequence> charSequences = new ArrayList<>();
             for (int i = 0; i < files.length; i++) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     Uri fileUri = IOUtils.insertDownloadFile(context, files[i]);
                     uris.add(fileUri);
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Uri uri;
+                    if (BuildConfig.IS_LIBRARY) {
+                        uri = FileProvider.getUriForFile(context, "com.moko.mkscannerpro.fileprovider", files[0]);
+                    } else {
+                        uri = FileProvider.getUriForFile(context, "com.moko.mkremotegw02.fileprovider", files[0]);
+                    }
+                    uris.add(uri);
                 } else {
                     uris.add(Uri.fromFile(files[i]));
                 }
+                charSequences.add(body);
             }
             intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
             intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-            ArrayList<CharSequence> charSequences = new ArrayList<>();
-            charSequences.add(body);
             intent.putExtra(Intent.EXTRA_TEXT, charSequences);
         }
         String[] addresses = {address};

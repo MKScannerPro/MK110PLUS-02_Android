@@ -17,6 +17,7 @@ public class AppConstants {
     public static final String SP_NAME = "sp_name_remote_gw02";
     //    public static final String SP_KEY_MQTT_CONFIG = "SP_KEY_MQTT_CONFIG";
     public static final String SP_KEY_MQTT_CONFIG_APP = "SP_KEY_MQTT_CONFIG_APP";
+    public static final String SP_URL = "SP_URL";
 
 
     public static final String SP_KEY_DEVICE_ADDRESS = "sp_key_device_address";
@@ -48,6 +49,9 @@ public class AppConstants {
     public static final String EXTRA_KEY_DEVICE_PUBLISH_TOPIC = "EXTRA_KEY_DEVICE_PUBLISH_TOPIC";
     public static final String EXTRA_KEY_DEVICE_LWT_ENABLE = "EXTRA_KEY_DEVICE_LWT_ENABLE";
     public static final String EXTRA_KEY_DEVICE_LWT_TOPIC = "EXTRA_KEY_DEVICE_LWT_TOPIC";
+    public static final String EXTRA_KEY_LOGIN_ACCOUNT = "EXTRA_KEY_LOGIN_ACCOUNT";
+    public static final String EXTRA_KEY_LOGIN_PASSWORD = "EXTRA_KEY_LOGIN_PASSWORD";
+    public static final String EXTRA_KEY_LOGIN_ENV = "EXTRA_KEY_LOGIN_ENV";
     // request_code
     public static final int REQUEST_CODE_TEMP_TARGET = 100;
     public static final int REQUEST_CODE_TIMER = 101;

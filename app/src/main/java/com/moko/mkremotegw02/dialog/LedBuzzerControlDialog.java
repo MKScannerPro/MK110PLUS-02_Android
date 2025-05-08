@@ -18,7 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.moko.mkremotegw02.R;
-import com.moko.mkremotegw02.utils.ToastUtils;
+import com.moko.lib.scannerui.utils.ToastUtils;
 
 /**
  * @author: jun.liu

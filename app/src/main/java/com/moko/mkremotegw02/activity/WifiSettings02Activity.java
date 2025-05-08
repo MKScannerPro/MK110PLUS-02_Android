@@ -17,9 +17,9 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.mkremotegw02.AppConstants;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityWifiSettings02Binding;
-import com.moko.mkremotegw02.dialog.Bottom02Dialog;
+import com.moko.lib.scannerui.dialog.BottomDialog;
 import com.moko.mkremotegw02.utils.FileUtils;
-import com.moko.mkremotegw02.utils.ToastUtils;
+import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.support.remotegw02.MokoSupport;
 import com.moko.support.remotegw02.OrderTaskAssembler;
 import com.moko.support.remotegw02.entity.OrderCHAR;
@@ -244,7 +244,7 @@ public class WifiSettings02Activity extends BaseActivity<ActivityWifiSettings02B
 
     public void onSelectSecurity(View view) {
         if (isWindowLocked()) return;
-        Bottom02Dialog dialog = new Bottom02Dialog();
+        BottomDialog dialog = new BottomDialog();
         dialog.setDatas(mSecurityValues, mSecuritySelected);
         dialog.setListener(value -> {
             mSecuritySelected = value;
@@ -277,7 +277,7 @@ public class WifiSettings02Activity extends BaseActivity<ActivityWifiSettings02B
 
     public void onSelectEAPType(View view) {
         if (isWindowLocked()) return;
-        Bottom02Dialog dialog = new Bottom02Dialog();
+        BottomDialog dialog = new BottomDialog();
         dialog.setDatas(mEAPTypeValues, mEAPTypeSelected);
         dialog.setListener(value -> {
             mEAPTypeSelected = value;

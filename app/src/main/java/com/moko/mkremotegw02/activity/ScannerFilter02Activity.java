@@ -13,7 +13,7 @@ import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityScannerFilter02Binding;
-import com.moko.mkremotegw02.utils.ToastUtils;
+import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.support.remotegw02.MokoSupport;
 import com.moko.support.remotegw02.OrderTaskAssembler;
 import com.moko.support.remotegw02.entity.OrderCHAR;

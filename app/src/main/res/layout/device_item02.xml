@@ -49,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="12dp"
-        android:drawableRight="@drawable/arrow_right"
+        android:drawableRight="@drawable/ic_arrow_right"
         android:drawablePadding="20dp"
         android:textColor="@color/grey_b3b3b3"
         tools:text="Online"

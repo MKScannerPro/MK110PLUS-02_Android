@@ -12,17 +12,17 @@ import com.google.gson.reflect.TypeToken;
 import com.moko.mkremotegw02.AppConstants;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityFilterTlm02Binding;
-import com.moko.mkremotegw02.dialog.Bottom02Dialog;
+import com.moko.lib.scannerui.dialog.BottomDialog;
 import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
-import com.moko.mkremotegw02.utils.ToastUtils;
+import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.support.remotegw02.MQTTConstants;
-import com.moko.support.remotegw02.MQTTSupport;
-import com.moko.support.remotegw02.entity.MsgConfigResult;
-import com.moko.support.remotegw02.entity.MsgReadResult;
-import com.moko.support.remotegw02.event.DeviceOnlineEvent;
-import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
+import com.moko.lib.mqtt.MQTTSupport;
+import com.moko.lib.mqtt.entity.MsgConfigResult;
+import com.moko.lib.mqtt.entity.MsgReadResult;
+import com.moko.lib.mqtt.event.DeviceOnlineEvent;
+import com.moko.lib.mqtt.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.Subscribe;
@@ -147,7 +147,7 @@ public class FilterTLM02Activity extends BaseActivity<ActivityFilterTlm02Binding
 
     public void onTLMVersion(View view) {
         if (isWindowLocked()) return;
-        Bottom02Dialog dialog = new Bottom02Dialog();
+        BottomDialog dialog = new BottomDialog();
         dialog.setDatas(mValues, mSelected);
         dialog.setListener(value -> {
             mSelected = value;

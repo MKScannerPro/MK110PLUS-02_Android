@@ -16,10 +16,10 @@ import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
 import com.moko.support.remotegw02.MQTTConstants;
-import com.moko.support.remotegw02.MQTTSupport;
-import com.moko.support.remotegw02.entity.MsgReadResult;
-import com.moko.support.remotegw02.event.DeviceOnlineEvent;
-import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
+import com.moko.lib.mqtt.MQTTSupport;
+import com.moko.lib.mqtt.entity.MsgReadResult;
+import com.moko.lib.mqtt.event.DeviceOnlineEvent;
+import com.moko.lib.mqtt.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.Subscribe;

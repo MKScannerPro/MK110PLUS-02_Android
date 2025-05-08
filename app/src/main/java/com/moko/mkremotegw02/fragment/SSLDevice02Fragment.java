@@ -17,9 +17,9 @@ import androidx.fragment.app.Fragment;
 import com.moko.mkremotegw02.R;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.FragmentSslDevice02Binding;
-import com.moko.mkremotegw02.dialog.Bottom02Dialog;
+import com.moko.lib.scannerui.dialog.BottomDialog;
 import com.moko.mkremotegw02.utils.FileUtils;
-import com.moko.mkremotegw02.utils.ToastUtils;
+import com.moko.lib.scannerui.utils.ToastUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -161,7 +161,7 @@ public class SSLDevice02Fragment extends Fragment {
     }
 
     public void selectCertificate() {
-        Bottom02Dialog dialog = new Bottom02Dialog();
+        BottomDialog dialog = new BottomDialog();
         dialog.setDatas(values, selected);
         dialog.setListener(value -> {
             selected = value;

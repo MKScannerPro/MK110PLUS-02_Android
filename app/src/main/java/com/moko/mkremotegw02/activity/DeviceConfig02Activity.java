@@ -25,19 +25,19 @@ import com.moko.mkremotegw02.activity.set.AdvertiseIBeacon02Activity;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityDeviceConfig02Binding;
 import com.moko.mkremotegw02.db.DBTools02;
-import com.moko.mkremotegw02.dialog.Custom03Dialog;
+import com.moko.lib.scannerui.dialog.CustomDialog;
 import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
-import com.moko.mkremotegw02.utils.ToastUtils;
+import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.support.remotegw02.MQTTConstants;
-import com.moko.support.remotegw02.MQTTSupport;
+import com.moko.lib.mqtt.MQTTSupport;
 import com.moko.support.remotegw02.MokoSupport;
 import com.moko.support.remotegw02.OrderTaskAssembler;
-import com.moko.support.remotegw02.entity.MsgNotify;
+import com.moko.lib.mqtt.entity.MsgNotify;
 import com.moko.support.remotegw02.entity.OrderCHAR;
 import com.moko.support.remotegw02.entity.ParamsKeyEnum;
-import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
+import com.moko.lib.mqtt.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.EventBus;
@@ -53,7 +53,7 @@ public class DeviceConfig02Activity extends BaseActivity<ActivityDeviceConfig02B
     private int mSelectedDeviceType;
     private boolean mIsMQTTConfigFinished;
     private boolean mIsWIFIConfigFinished;
-    private Custom03Dialog mqttConnDialog;
+    private CustomDialog mqttConnDialog;
     private DonutProgress donutProgress;
     private boolean isSettingSuccess;
     private boolean isDeviceConnectSuccess;
@@ -277,7 +277,7 @@ public class DeviceConfig02Activity extends BaseActivity<ActivityDeviceConfig02B
         isDeviceConnectSuccess = false;
         View view = LayoutInflater.from(this).inflate(R.layout.mqtt_conn_content, null);
         donutProgress = view.findViewById(R.id.dp_progress);
-        mqttConnDialog = new Custom03Dialog.Builder(this)
+        mqttConnDialog = new CustomDialog.Builder(this)
                 .setContentView(view)
                 .create();
         mqttConnDialog.setCancelable(false);

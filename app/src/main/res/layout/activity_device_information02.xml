@@ -17,7 +17,7 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/back" />
+            android:src="@drawable/ic_back" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -212,7 +212,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1.0"
-            android:text="@string/device_info_sta_mac"
+            android:text="@string/device_info_wifi_mac"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
 
@@ -240,7 +240,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1.0"
-            android:text="@string/device_info_bt_mac"
+            android:text="@string/device_info_ble_mac"
             android:textColor="@color/black_333333"
             android:textSize="15sp" />
 

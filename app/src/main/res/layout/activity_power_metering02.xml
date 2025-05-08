@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:onClick="back"
             android:padding="16dp"
-            android:src="@drawable/back" />
+            android:src="@drawable/ic_back" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -51,7 +51,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            android:drawableRight="@drawable/arrow_right"
+            android:drawableRight="@drawable/ic_arrow_right"
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:text="ON"

@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 
 import com.moko.mkremotegw02.activity.set.ModifyMQTTSettings02Activity;
 import com.moko.mkremotegw02.databinding.FragmentSslDeviceUrl02Binding;
-import com.moko.mkremotegw02.dialog.Bottom02Dialog;
+import com.moko.lib.scannerui.dialog.BottomDialog;
 
 import java.util.ArrayList;
 
@@ -153,7 +153,7 @@ public class SSLDeviceUrl02Fragment extends Fragment {
     }
 
     public void selectCertificate() {
-        Bottom02Dialog dialog = new Bottom02Dialog();
+        BottomDialog dialog = new BottomDialog();
         dialog.setDatas(values, selected);
         dialog.setListener(value -> {
             selected = value;

@@ -24,20 +24,20 @@ import com.moko.mkremotegw02.activity.RemoteMainWithMetering02Activity;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityDeviceSetting02Binding;
 import com.moko.mkremotegw02.db.DBTools02;
-import com.moko.mkremotegw02.dialog.AlertMessageDialog;
-import com.moko.mkremotegw02.dialog.Custom03Dialog;
+import com.moko.lib.scannerui.dialog.AlertMessageDialog;
+import com.moko.lib.scannerui.dialog.CustomDialog;
 import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
-import com.moko.mkremotegw02.utils.ToastUtils;
+import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.support.remotegw02.MQTTConstants;
-import com.moko.support.remotegw02.MQTTSupport;
-import com.moko.support.remotegw02.entity.MsgConfigResult;
-import com.moko.support.remotegw02.entity.MsgReadResult;
-import com.moko.support.remotegw02.event.DeviceDeletedEvent;
-import com.moko.support.remotegw02.event.DeviceModifyNameEvent;
-import com.moko.support.remotegw02.event.DeviceOnlineEvent;
-import com.moko.support.remotegw02.event.MQTTMessageArrivedEvent;
+import com.moko.lib.mqtt.MQTTSupport;
+import com.moko.lib.mqtt.entity.MsgConfigResult;
+import com.moko.lib.mqtt.entity.MsgReadResult;
+import com.moko.lib.mqtt.event.DeviceDeletedEvent;
+import com.moko.lib.mqtt.event.DeviceModifyNameEvent;
+import com.moko.lib.mqtt.event.DeviceOnlineEvent;
+import com.moko.lib.mqtt.event.MQTTMessageArrivedEvent;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.greenrobot.eventbus.EventBus;
@@ -107,12 +107,12 @@ public class DeviceSetting02Activity extends BaseActivity<ActivityDeviceSetting0
             if (msg_id == MQTTConstants.READ_MSG_ID_OUTPUT_SWITCH) {
                 isOutputSwitch = enable == 1;
                 getSwitchState(MQTTConstants.READ_MSG_ID_OUTPUT_CONTROL);
-                mBind.imgOutputSwitch.setImageResource(enable == 1 ? R.drawable.checkbox_open : R.drawable.checkbox_close);
+                mBind.imgOutputSwitch.setImageResource(enable == 1 ? R.drawable.ic_checkbox_open : R.drawable.ic_checkbox_close);
             } else {
                 dismissLoadingProgressDialog();
                 mHandler.removeMessages(0);
                 isOutputControl = enable == 1;
-                mBind.imgOutputControl.setImageResource(enable == 1 ? R.drawable.checkbox_open : R.drawable.checkbox_close);
+                mBind.imgOutputControl.setImageResource(enable == 1 ? R.drawable.ic_checkbox_open : R.drawable.ic_checkbox_close);
             }
         }
         if (msg_id == MQTTConstants.CONFIG_MSG_ID_OUTPUT_SWITCH || msg_id == MQTTConstants.CONFIG_MSG_ID_OUTPUT_CONTROL) {
@@ -125,10 +125,10 @@ public class DeviceSetting02Activity extends BaseActivity<ActivityDeviceSetting0
             if (result.result_code == 0) {
                 if (msg_id == MQTTConstants.CONFIG_MSG_ID_OUTPUT_SWITCH) {
                     isOutputSwitch = !isOutputSwitch;
-                    mBind.imgOutputSwitch.setImageResource(isOutputSwitch ? R.drawable.checkbox_open : R.drawable.checkbox_close);
+                    mBind.imgOutputSwitch.setImageResource(isOutputSwitch ? R.drawable.ic_checkbox_open : R.drawable.ic_checkbox_close);
                 } else {
                     isOutputControl = !isOutputControl;
-                    mBind.imgOutputControl.setImageResource(isOutputControl ? R.drawable.checkbox_open : R.drawable.checkbox_close);
+                    mBind.imgOutputControl.setImageResource(isOutputControl ? R.drawable.ic_checkbox_open : R.drawable.ic_checkbox_close);
                 }
                 ToastUtils.showToast(this, "Set up succeed");
             } else {
@@ -213,7 +213,7 @@ public class DeviceSetting02Activity extends BaseActivity<ActivityDeviceSetting0
         etDeviceName.setText(deviceName);
         etDeviceName.setSelection(deviceName.length());
         etDeviceName.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
-        Custom03Dialog dialog = new Custom03Dialog.Builder(this)
+        CustomDialog dialog = new CustomDialog.Builder(this)
                 .setContentView(content)
                 .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override

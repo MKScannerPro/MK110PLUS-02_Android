@@ -14,8 +14,8 @@ import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityModifyDeviceName02Binding;
 import com.moko.mkremotegw02.db.DBTools02;
 import com.moko.mkremotegw02.entity.MokoDevice;
-import com.moko.mkremotegw02.utils.ToastUtils;
-import com.moko.support.remotegw02.event.MQTTConnectionCompleteEvent;
+import com.moko.lib.scannerui.utils.ToastUtils;
+import com.moko.lib.mqtt.event.MQTTConnectionCompleteEvent;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

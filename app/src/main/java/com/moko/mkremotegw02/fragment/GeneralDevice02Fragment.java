@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.moko.mkremotegw02.databinding.FragmentGeneralDevice02Binding;
-import com.moko.mkremotegw02.utils.ToastUtils;
+import com.moko.lib.scannerui.utils.ToastUtils;
 
 public class GeneralDevice02Fragment extends Fragment {
     private static final String TAG = GeneralDevice02Fragment.class.getSimpleName();

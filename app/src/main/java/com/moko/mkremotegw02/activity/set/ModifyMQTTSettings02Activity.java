@@ -10,21 +10,25 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.RadioGroup;
 
-import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
-
 import com.elvishew.xlog.XLog;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.moko.lib.mqtt.MQTTSupport;
+import com.moko.lib.mqtt.entity.MsgConfigResult;
+import com.moko.lib.mqtt.entity.MsgNotify;
+import com.moko.lib.mqtt.entity.MsgReadResult;
+import com.moko.lib.mqtt.event.DeviceOnlineEvent;
+import com.moko.lib.mqtt.event.MQTTMessageArrivedEvent;
+import com.moko.lib.scannerui.dialog.AlertMessageDialog;
+import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.mkremotegw02.AppConstants;
 import com.moko.mkremotegw02.R;
 import com.moko.mkremotegw02.activity.RemoteMainWithMetering02Activity;
 import com.moko.mkremotegw02.adapter.MQTTFragmentAdapter;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityMqttDeviceModify02Binding;
-import com.moko.lib.scannerui.dialog.AlertMessageDialog;
 import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.fragment.GeneralDevice02Fragment;
@@ -33,15 +37,8 @@ import com.moko.mkremotegw02.fragment.SSLDeviceUrl02Fragment;
 import com.moko.mkremotegw02.fragment.UserDevice02Fragment;
 import com.moko.mkremotegw02.utils.FileUtils;
 import com.moko.mkremotegw02.utils.SPUtiles;
-import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.mkremotegw02.utils.Utils;
 import com.moko.support.remotegw02.MQTTConstants;
-import com.moko.lib.mqtt.MQTTSupport;
-import com.moko.lib.mqtt.entity.MsgConfigResult;
-import com.moko.lib.mqtt.entity.MsgNotify;
-import com.moko.lib.mqtt.entity.MsgReadResult;
-import com.moko.lib.mqtt.event.DeviceOnlineEvent;
-import com.moko.lib.mqtt.event.MQTTMessageArrivedEvent;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -58,6 +55,9 @@ import java.io.File;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 public class ModifyMQTTSettings02Activity extends BaseActivity<ActivityMqttDeviceModify02Binding> implements RadioGroup.OnCheckedChangeListener {
     public static String TAG = ModifyMQTTSettings02Activity.class.getSimpleName();

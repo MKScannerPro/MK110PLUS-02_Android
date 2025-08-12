@@ -8,29 +8,25 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.RadioGroup;
 
-import androidx.annotation.IdRes;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
-
 import com.moko.ble.lib.MokoConstants;
 import com.moko.ble.lib.event.ConnectStatusEvent;
 import com.moko.ble.lib.event.OrderTaskResponseEvent;
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
+import com.moko.lib.scannerui.dialog.AlertMessageDialog;
+import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.mkremotegw02.AppConstants;
 import com.moko.mkremotegw02.R;
 import com.moko.mkremotegw02.adapter.MQTTFragmentAdapter;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityMqttDevice02Binding;
-import com.moko.lib.scannerui.dialog.AlertMessageDialog;
 import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.fragment.GeneralDevice02Fragment;
 import com.moko.mkremotegw02.fragment.LWT02Fragment;
 import com.moko.mkremotegw02.fragment.SSLDevice02Fragment;
 import com.moko.mkremotegw02.fragment.UserDevice02Fragment;
 import com.moko.mkremotegw02.utils.FileUtils;
-import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.mkremotegw02.utils.Utils;
 import com.moko.support.remotegw02.MokoSupport;
 import com.moko.support.remotegw02.OrderTaskAssembler;
@@ -52,6 +48,10 @@ import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import androidx.annotation.IdRes;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 public class MqttSettings02Activity extends BaseActivity<ActivityMqttDevice02Binding> implements RadioGroup.OnCheckedChangeListener {
     private final String FILTER_ASCII = "[ -~]*";

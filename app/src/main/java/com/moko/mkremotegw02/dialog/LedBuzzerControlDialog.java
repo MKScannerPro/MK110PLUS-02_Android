@@ -13,12 +13,12 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.moko.lib.scannerui.utils.ToastUtils;
+import com.moko.mkremotegw02.R;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
-import com.moko.mkremotegw02.R;
-import com.moko.lib.scannerui.utils.ToastUtils;
 
 /**
  * @author: jun.liu

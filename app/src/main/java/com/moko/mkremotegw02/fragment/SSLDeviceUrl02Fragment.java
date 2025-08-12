@@ -7,14 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
+import com.moko.lib.scannerui.dialog.BottomDialog;
 import com.moko.mkremotegw02.activity.set.ModifyMQTTSettings02Activity;
 import com.moko.mkremotegw02.databinding.FragmentSslDeviceUrl02Binding;
-import com.moko.lib.scannerui.dialog.BottomDialog;
 
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 public class SSLDeviceUrl02Fragment extends Fragment {
     private static final String TAG = SSLDeviceUrl02Fragment.class.getSimpleName();

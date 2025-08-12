@@ -6,13 +6,13 @@ if (!isLibrary.toBoolean()) {
 
 android {
     namespace "com.moko.mkremotegw02"
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
-        minSdk 26
-        targetSdk 34
-        versionCode 5
-        versionName "1.0.4"
+        minSdk 28
+        targetSdk 35
+        versionCode 105
+        versionName "1.0.5"
         def formatDate = new Date().format("yyyyMMddHHmm")
         setProperty("archivesBaseName", "MKRemoteGW02_${versionName}_${formatDate}")
     }
@@ -88,18 +88,16 @@ android {
 }
 
 dependencies {
+    implementation 'org.apache.poi:poi:5.2.3'
+    implementation 'org.apache.poi:poi-ooxml:5.2.3'
     if (!isLibrary.toBoolean()) {
         implementation project(path: ':mokosupport')
-        implementation files('libs/poi-3.12-android-a.jar')
-        implementation files('libs/poi-ooxml-schemas-3.12-20150511-a.jar')
         implementation 'com.github.MOKO-Android-Base-Library:MKScannerIoTLib:1.0.5'
-        implementation 'com.github.MOKO-Android-Base-Library:MKMqttLib:1.0.0'
+        implementation 'com.github.MOKO-Android-Base-Library:MKMqttLib:1.0.1'
     } else {
         implementation files('libs/mokoSupport.jar')
         compileOnly 'com.github.MOKO-Android-Base-Library:MKScannerIoTLib:1.0.5'
-        compileOnly 'com.github.MOKO-Android-Base-Library:MKMqttLib:1.0.0'
+        compileOnly 'com.github.MOKO-Android-Base-Library:MKMqttLib:1.0.1'
         compileOnly 'com.github.MOKO-Android-Base-Library:MKBleLib:1.0.1'
-        compileOnly files('libs/poi-3.12-android-a.jar')
-        compileOnly files('libs/poi-ooxml-schemas-3.12-20150511-a.jar')
     }
 }

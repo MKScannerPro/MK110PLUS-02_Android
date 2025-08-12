@@ -3,17 +3,15 @@ package com.moko.mkremotegw02.activity;
 import android.text.TextUtils;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-
 import com.moko.ble.lib.MokoConstants;
 import com.moko.ble.lib.event.ConnectStatusEvent;
 import com.moko.ble.lib.event.OrderTaskResponseEvent;
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
 import com.moko.ble.lib.utils.MokoUtils;
+import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityNetworkSettings02Binding;
-import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.support.remotegw02.MokoSupport;
 import com.moko.support.remotegw02.OrderTaskAssembler;
 import com.moko.support.remotegw02.entity.OrderCHAR;
@@ -25,6 +23,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
 
 public class NetworkSettings02Activity extends BaseActivity<ActivityNetworkSettings02Binding> {
     private boolean mSavedParamsError;

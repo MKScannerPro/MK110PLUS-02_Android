@@ -10,19 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
+import com.moko.lib.scannerui.dialog.BottomDialog;
+import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.mkremotegw02.R;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.FragmentSslDevice02Binding;
-import com.moko.lib.scannerui.dialog.BottomDialog;
 import com.moko.mkremotegw02.utils.FileUtils;
-import com.moko.lib.scannerui.utils.ToastUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 public class SSLDevice02Fragment extends Fragment {
     public static final int REQUEST_CODE_SELECT_CA = 0x10;

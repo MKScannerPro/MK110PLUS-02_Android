@@ -7,19 +7,17 @@ import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
 
-import androidx.annotation.Nullable;
-
 import com.moko.ble.lib.MokoConstants;
 import com.moko.ble.lib.event.ConnectStatusEvent;
 import com.moko.ble.lib.event.OrderTaskResponseEvent;
 import com.moko.ble.lib.task.OrderTask;
 import com.moko.ble.lib.task.OrderTaskResponse;
+import com.moko.lib.scannerui.dialog.BottomDialog;
+import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.mkremotegw02.AppConstants;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityWifiSettings02Binding;
-import com.moko.lib.scannerui.dialog.BottomDialog;
 import com.moko.mkremotegw02.utils.FileUtils;
-import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.support.remotegw02.MokoSupport;
 import com.moko.support.remotegw02.OrderTaskAssembler;
 import com.moko.support.remotegw02.entity.OrderCHAR;
@@ -33,6 +31,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 public class WifiSettings02Activity extends BaseActivity<ActivityWifiSettings02Binding> {
     private final String FILTER_ASCII = "[ -~]*";

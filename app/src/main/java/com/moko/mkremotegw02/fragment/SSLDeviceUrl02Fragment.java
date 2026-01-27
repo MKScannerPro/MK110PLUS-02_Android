@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.moko.lib.scannerui.dialog.BottomDialog;
-import com.moko.mkremotegw02.activity.set.ModifyMQTTSettings02Activity;
+import com.moko.mkremotegw02.activity.modify.ModifyMQTTSettings02Activity;
 import com.moko.mkremotegw02.databinding.FragmentSslDeviceUrl02Binding;
 
 import java.util.ArrayList;

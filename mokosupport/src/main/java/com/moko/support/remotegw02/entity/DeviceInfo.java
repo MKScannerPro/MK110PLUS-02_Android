@@ -10,15 +10,6 @@ public class DeviceInfo implements Serializable {
     public String mac;
     public String scanRecord;
     public int deviceType;
+    public boolean isFirstConfig;
     public ScanResult scanResult;
-
-    @Override
-    public String toString() {
-        return "DeviceInfo{" +
-                "name='" + name + '\'' +
-                ", rssi=" + rssi +
-                ", mac='" + mac + '\'' +
-                ", scanRecord='" + scanRecord + '\'' +
-                '}';
-    }
 }

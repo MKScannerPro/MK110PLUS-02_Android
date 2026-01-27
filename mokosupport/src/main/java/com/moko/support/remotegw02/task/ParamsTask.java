@@ -30,80 +30,11 @@ public class ParamsTask extends OrderTask {
     }
 
     public void setData(ParamsKeyEnum key) {
-        switch (key) {
-            case KEY_PASSWORD:
-            case KEY_RESET_PARAMS_TYPE:
-            case KEY_DEVICE_NAME:
-            case KEY_PRODUCT_MODEL:
-            case KEY_HARDWARE_VERSION:
-            case KEY_MANUFACTURER:
-            case KEY_BLE_MAC:
-            case KEY_WIFI_MAC:
-                // ====TEST
-            case KEY_PRODUCT_TEST_BUTTON_STATE:
-            case KEY_PRODUCT_TEST_DEVICE_STATE:
-                // ====
-            case KEY_INDICATOR_SWITCH:
-            case KEY_NTP_ENABLE:
-            case KEY_NTP_URL:
-            case KEY_NTP_TIME_ZONE:
-                // MQTT
-            case KEY_MQTT_HOST:
-            case KEY_MQTT_PORT:
-            case KEY_MQTT_CLIENT_ID:
-            case KEY_MQTT_CLEAN_SESSION:
-            case KEY_MQTT_KEEP_ALIVE:
-            case KEY_MQTT_QOS:
-            case KEY_MQTT_SUBSCRIBE_TOPIC:
-            case KEY_MQTT_PUBLISH_TOPIC:
-            case KEY_MQTT_LWT_ENABLE:
-            case KEY_MQTT_LWT_QOS:
-            case KEY_MQTT_LWT_RETAIN:
-            case KEY_MQTT_LWT_TOPIC:
-            case KEY_MQTT_LWT_PAYLOAD:
-            case KEY_MQTT_CONNECT_MODE:
-                // WIFI
-            case KEY_WIFI_SECURITY_TYPE:
-            case KEY_WIFI_SSID:
-            case KEY_WIFI_PASSWORD:
-            case KEY_WIFI_EAP_TYPE:
-            case KEY_WIFI_EAP_USERNAME:
-            case KEY_WIFI_EAP_PASSWORD:
-            case KEY_WIFI_EAP_DOMAIN_ID:
-            case KEY_WIFI_EAP_VERIFY_SERVICE_ENABLE:
-            case KEY_NETWORK_DHCP:
-            case KEY_NETWORK_IP_INFO:
-                // OTHER
-            case KEY_FILTER_RSSI:
-            case KEY_FILTER_RELATIONSHIP:
-            case KEY_FILTER_MAC_PRECISE:
-            case KEY_FILTER_MAC_REVERSE:
-            case KEY_FILTER_MAC_RULES:
-            case KEY_FILTER_NAME_PRECISE:
-            case KEY_FILTER_NAME_REVERSE:
-            case KEY_I_BEACON_SWITCH:
-            case KEY_I_BEACON_MAJOR:
-            case KEY_I_BEACON_MINOR:
-            case KEY_I_BEACON_UUID:
-            case KEY_I_BEACON_AD_INTERVAL:
-            case KEY_I_BEACON_TX_POWER:
-            case KEY_METERING_REPORT_ENABLE:
-            case KEY_POWER_REPORT_INTERVAL:
-            case KEY_ENERGY_REPORT_INTERVAL:
-            case KEY_LOAD_DETECTION_NOTIFY_ENABLE:
-                createGetConfigData(key.getParamsKey());
-                break;
-        }
+        createGetConfigData(key.getParamsKey());
     }
 
     public void setData(ParamsLongKeyEnum key) {
-        switch (key) {
-            case KEY_MQTT_USERNAME:
-            case KEY_MQTT_PASSWORD:
-            case KEY_FILTER_NAME_RULES:
-                createGetLongConfigData(key.getParamsKey());
-                break;
-        }
+        createGetLongConfigData(key.getParamsKey());
     }
 
     private void createGetLongConfigData(int paramsKey) {
@@ -124,6 +55,15 @@ public class ParamsTask extends OrderTask {
                 (byte) 0x00
         };
         response.responseValue = data;
+    }
+
+    public void getNearbyWifi() {
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) ParamsKeyEnum.KEY_WIFI_SEARCH.getParamsKey(),
+                (byte) 0x00
+        };
     }
 
     public void reboot() {
@@ -725,6 +665,21 @@ public class ParamsTask extends OrderTask {
         response.responseValue = data;
     }
 
+    public void setReportInterval(@IntRange(from = 0, to = 86400) int interval) {
+        byte[] dataBytes = MokoUtils.toByteArray(interval, 4);
+        data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) ParamsKeyEnum.KEY_REPORT_INTERVAL.getParamsKey(),
+                (byte) 0x04,
+                (byte) dataBytes[0],
+                (byte) dataBytes[1],
+                (byte) dataBytes[2],
+                (byte) dataBytes[3]
+        };
+        response.responseValue = data;
+    }
+
     public void setFile(ParamsLongKeyEnum key, File file) throws Exception {
         FileInputStream inputSteam = new FileInputStream(file);
         dataBytes = new byte[(int) file.length()];
@@ -1030,6 +985,27 @@ public class ParamsTask extends OrderTask {
                 (byte) txPower
         };
     }
+
+    public void setIBeaconRssi1M(@IntRange(from = -100, to = 0) int rssi1M) {
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) ParamsKeyEnum.KEY_I_BEACON_RSSI1M.getParamsKey(),
+                (byte) 0x01,
+                (byte) rssi1M
+        };
+    }
+
+    public void setIBeaconConnectable(@IntRange(from = 0, to = 1) int enable) {
+        response.responseValue = data = new byte[]{
+                (byte) 0xED,
+                (byte) 0x01,
+                (byte) ParamsKeyEnum.KEY_I_BEACON_CONNECTABLE.getParamsKey(),
+                (byte) 0x01,
+                (byte) enable
+        };
+    }
+
 
     public void setMeteringReportEnable(@IntRange(from = 0, to = 1) int enable) {
         response.responseValue = data = new byte[]{

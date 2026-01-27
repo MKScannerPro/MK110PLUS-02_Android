@@ -24,7 +24,8 @@ import com.moko.mkremotegw02.activity.filter.DuplicateDataFilter02Activity;
 import com.moko.mkremotegw02.activity.filter.FilterAdvName02Activity;
 import com.moko.mkremotegw02.activity.filter.FilterMacAddress02Activity;
 import com.moko.mkremotegw02.activity.filter.FilterRawDataSwitch02Activity;
-import com.moko.mkremotegw02.activity.filter.UploadDataOption02Activity;
+import com.moko.mkremotegw02.activity.upload.UploadDataIntervalActivity;
+import com.moko.mkremotegw02.activity.upload.UploadDataOption02Activity;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityScannerUploadOption02Binding;
 import com.moko.mkremotegw02.entity.MQTTConfig;
@@ -51,6 +52,8 @@ public class ScannerUploadOption02Activity extends BaseActivity<ActivityScannerU
     private int mRelationshipSelected;
     private final String[] phyArr = {"1M PHY(V4.2)", "1M PHY(V5.0)", "1M PHY(V4.2) & 1M PHY(V5.0)", "Coded PHY(V5.0)"};
     private int phySelected;
+    private int mDuplicateDataSelected;
+    private final String[] mDuplicateDataValues = {"Disable", "MAC", "MAC+DATA TYPE", "MAC+RAW DATA"};
 
     @Override
     protected void onCreate() {
@@ -62,6 +65,9 @@ public class ScannerUploadOption02Activity extends BaseActivity<ActivityScannerU
 
         mBind.tvName.setText(mMokoDevice.name);
         mBind.sbRssiFilter.setOnSeekBarChangeListener(this);
+        mBind.clDuplicateDataFilter.setVisibility(mMokoDevice.deviceType != 0x10 ? View.VISIBLE : View.GONE);
+        mBind.rlDuplicateDataFilter.setVisibility(mMokoDevice.deviceType != 0x10 ? View.GONE : View.VISIBLE);
+        mBind.tvUploadDataInterval.setVisibility(mMokoDevice.deviceType != 0x10 ? View.VISIBLE : View.GONE);
         mRelationshipValues = new ArrayList<>();
         mRelationshipValues.add("Null");
         mRelationshipValues.add("Only MAC");
@@ -131,6 +137,22 @@ public class ScannerUploadOption02Activity extends BaseActivity<ActivityScannerU
             mHandler.removeMessages(0);
             phySelected = result.data.get("phy_filter").getAsInt();
             mBind.tvFilterPhy.setText(phyArr[phySelected]);
+            if (mMokoDevice.deviceType != 0x10) {
+                getDuplicateDataFilter();
+                return;
+            }
+            mHandler.removeMessages(0);
+            dismissLoadingProgressDialog();
+        }
+        if (msg_id == MQTTConstants.READ_MSG_ID_DUPLICATE_DATA_FILTER) {
+            Type type = new TypeToken<MsgReadResult<JsonObject>>() {
+            }.getType();
+            MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
+            dismissLoadingProgressDialog();
+            mHandler.removeMessages(0);
+            mDuplicateDataSelected = result.data.get("rule").getAsInt();
+            mBind.tvDuplicateDataFilter.setText(mDuplicateDataValues[mDuplicateDataSelected]);
         }
         if (msg_id == MQTTConstants.CONFIG_MSG_ID_FILTER_RSSI) {
             Type type = new TypeToken<MsgConfigResult>() {
@@ -153,6 +175,24 @@ public class ScannerUploadOption02Activity extends BaseActivity<ActivityScannerU
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
             if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
+            if (mMokoDevice.deviceType != 0x10) {
+                setDuplicateDataFilter();
+                return;
+            }
+            dismissLoadingProgressDialog();
+            mHandler.removeMessages(0);
+            if (result.result_code == 0) {
+                ToastUtils.showToast(this, "Set up succeed");
+            } else {
+                ToastUtils.showToast(this, "Set up failed");
+            }
+        }
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_DUPLICATE_DATA_FILTER) {
+            Type type = new TypeToken<MsgConfigResult>() {
+            }.getType();
+            MsgConfigResult result = new Gson().fromJson(message, type);
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac))
+                return;
             dismissLoadingProgressDialog();
             mHandler.removeMessages(0);
             if (result.result_code == 0) {
@@ -225,6 +265,28 @@ public class ScannerUploadOption02Activity extends BaseActivity<ActivityScannerU
         }
     }
 
+    private void getDuplicateDataFilter() {
+        int msgId = MQTTConstants.READ_MSG_ID_DUPLICATE_DATA_FILTER;
+        String message = assembleReadCommon(msgId, mMokoDevice.mac);
+        try {
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setDuplicateDataFilter() {
+        int msgId = MQTTConstants.CONFIG_MSG_ID_DUPLICATE_DATA_FILTER;
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("rule", mDuplicateDataSelected);
+        String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
+        try {
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void setFilterRelationship() {
         int msgId = MQTTConstants.CONFIG_MSG_ID_FILTER_RELATIONSHIP;
         JsonObject jsonObject = new JsonObject();
@@ -260,60 +322,51 @@ public class ScannerUploadOption02Activity extends BaseActivity<ActivityScannerU
         dialog.show(getSupportFragmentManager());
     }
 
+    public void onFilterDuplicateData(View view) {
+        if (isWindowLocked())
+            return;
+        BottomDialog dialog = new BottomDialog();
+        dialog.setDatas(new ArrayList<>(Arrays.asList(mDuplicateDataValues)), mDuplicateDataSelected);
+        dialog.setListener(value -> {
+            mDuplicateDataSelected = value;
+            mBind.tvDuplicateDataFilter.setText(mDuplicateDataValues[value]);
+        });
+        dialog.show(getSupportFragmentManager());
+    }
 
-    public void onDuplicateDataFilter(View view) {
+    private void start(Class<?> clazz) {
         if (isWindowLocked()) return;
         if (!MQTTSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
-        Intent i = new Intent(this, DuplicateDataFilter02Activity.class);
+        Intent i = new Intent(this, clazz);
         i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
         startActivity(i);
+    }
+
+    public void onDuplicateDataFilter(View view) {
+        start(DuplicateDataFilter02Activity.class);
     }
 
     public void onUploadDataOption(View view) {
-        if (isWindowLocked()) return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, UploadDataOption02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startActivity(i);
+        start(UploadDataOption02Activity.class);
+    }
+
+    public void onUploadDataInterval(View view) {
+        start(UploadDataIntervalActivity.class);
     }
 
     public void onFilterByMac(View view) {
-        if (isWindowLocked()) return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterMacAddress02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startActivity(i);
+        start(FilterMacAddress02Activity.class);
     }
 
     public void onFilterByName(View view) {
-        if (isWindowLocked()) return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterAdvName02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startActivity(i);
+        start(FilterAdvName02Activity.class);
     }
 
     public void onFilterByRawData(View view) {
-        if (isWindowLocked()) return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterRawDataSwitch02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startActivity(i);
+        start(FilterRawDataSwitch02Activity.class);
     }
 
     public void onSave(View view) {

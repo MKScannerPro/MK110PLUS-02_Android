@@ -21,6 +21,7 @@ import com.moko.lib.scannerui.dialog.PasswordBleDialog;
 import com.moko.lib.scannerui.dialog.ScanFilterDialog;
 import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.mkremotegw02.AppConstants;
+import com.moko.mkremotegw02.activity.beacon.BleOtherInfo02Activity;
 import com.moko.mkremotegw02.adapter.BleDevice02Adapter;
 import com.moko.mkremotegw02.base.BaseActivity;
 import com.moko.mkremotegw02.databinding.ActivityBleDevices02Binding;
@@ -81,7 +82,10 @@ public class BleManager02Activity extends BaseActivity<ActivityBleDevices02Bindi
     private void refreshList() {
         new Thread(() -> {
             while (refreshFlag) {
-                runOnUiThread(() -> mAdapter.replaceData(mBleDevices));
+                runOnUiThread(() -> {
+                    mBind.tvCount.setText(String.format("Count:%d", mBleDevices.size()));
+                    mAdapter.replaceData(mBleDevices);
+                });
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
@@ -136,7 +140,7 @@ public class BleManager02Activity extends BaseActivity<ActivityBleDevices02Bindi
                 }
             });
         }
-        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_BUTTON_CONNECT_RESULT) {
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_B_D_CONNECT_RESULT) {
             runOnUiThread(() -> {
                 dismissLoadingProgressDialog();
                 mHandler.removeMessages(0);
@@ -152,7 +156,7 @@ public class BleManager02Activity extends BaseActivity<ActivityBleDevices02Bindi
                 }
                 Intent intent = new Intent(this, BXPButtonInfo02Activity.class);
                 intent.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-                intent.putExtra(AppConstants.EXTRA_KEY_BXP_BUTTON_INFO, bxpButtonInfo);
+                intent.putExtra(AppConstants.EXTRA_KEY_BEACON_INFO, bxpButtonInfo);
                 startActivity(intent);
             });
         }
@@ -334,7 +338,7 @@ public class BleManager02Activity extends BaseActivity<ActivityBleDevices02Bindi
     }
 
     private void getBleDeviceInfo(BleDevice bleDevice, String password) {
-        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_BUTTON_CONNECT;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_B_D_CONNECT;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("mac", bleDevice.mac);
         jsonObject.addProperty("passwd", password);

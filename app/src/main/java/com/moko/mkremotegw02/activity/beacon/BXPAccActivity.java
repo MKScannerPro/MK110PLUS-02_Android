@@ -1,0 +1,249 @@
+package com.moko.mkremotegw02.activity.beacon;
+
+import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.moko.lib.mqtt.MQTTSupport;
+import com.moko.lib.mqtt.entity.MsgNotify;
+import com.moko.lib.mqtt.event.MQTTMessageArrivedEvent;
+import com.moko.lib.scannerui.utils.ToastUtils;
+import com.moko.mkremotegw02.AppConstants;
+import com.moko.mkremotegw02.R;
+import com.moko.mkremotegw02.activity.RemoteMainWithMetering02Activity;
+import com.moko.mkremotegw02.adapter.AccDataAdapter;
+import com.moko.mkremotegw02.base.BaseActivity;
+import com.moko.mkremotegw02.databinding.ActivityAcc02Binding;
+import com.moko.mkremotegw02.entity.MQTTConfig;
+import com.moko.mkremotegw02.entity.MokoDevice;
+import com.moko.mkremotegw02.utils.SPUtiles;
+import com.moko.mkremotegw02.utils.Utils;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.entity.AccData;
+
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+public class BXPAccActivity extends BaseActivity<ActivityAcc02Binding> {
+    private boolean isSync;
+    private MokoDevice mMokoDevice;
+    private MQTTConfig appMqttConfig;
+    private String mAppTopic;
+    private Handler mHandler;
+    private String mac;
+    private Animation animation;
+    private final List<AccData> dataList = new ArrayList<>();
+    private AccDataAdapter adapter;
+    private final StringBuilder exportStr = new StringBuilder();
+    private final String title = "acc_data";
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    private int mBeaconType;
+
+    @Override
+    protected ActivityAcc02Binding getViewBinding() {
+        return ActivityAcc02Binding.inflate(getLayoutInflater());
+    }
+
+    @Override
+    protected void onCreate() {
+        mMokoDevice = (MokoDevice) getIntent().getSerializableExtra(AppConstants.EXTRA_KEY_DEVICE);
+        mac = getIntent().getStringExtra(AppConstants.EXTRA_KEY_MAC);
+        mBeaconType = getIntent().getIntExtra(AppConstants.EXTRA_KEY_BEACON_TYPE, 1);
+        String mqttConfigAppStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+        mAppTopic = TextUtils.isEmpty(appMqttConfig.topicPublish) ? mMokoDevice.topicSubscribe : appMqttConfig.topicPublish;
+        mHandler = new Handler(Looper.getMainLooper());
+        animation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh);
+        adapter = new AccDataAdapter();
+        mBind.rvList.setAdapter(adapter);
+        mBind.tvExport.setEnabled(false);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMQTTMessageArrivedEvent(MQTTMessageArrivedEvent event) {
+        // 更新所有设备的网络状态
+        final String message = event.getMessage();
+        if (TextUtils.isEmpty(message)) return;
+        int msg_id;
+        try {
+            JsonObject object = new Gson().fromJson(message, JsonObject.class);
+            JsonElement element = object.get("msg_id");
+            msg_id = element.getAsInt();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_B_D_ACC_REALTIME_ENABLE
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_B_CR_ACC_ENABLE
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_C_ACC_REALTIME_ENABLE
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_D_ACC_REALTIME_ENABLE
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_T_ACC_REALTIME_ENABLE
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_S_ACC_REALTIME_ENABLE
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_MK_TOF_ACC_REALTIME_ENABLE) {
+            Type type = new TypeToken<MsgNotify<JsonObject>>() {
+            }.getType();
+            MsgNotify<JsonObject> result = new Gson().fromJson(message, type);
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
+            dismissLoadingProgressDialog();
+            mHandler.removeMessages(0);
+            int code = result.data.get("result_code").getAsInt();
+            ToastUtils.showToast(this, code == 0 ? "Setup succeed！" : "setup failed");
+            if (code == 0) {
+                if (!isSync) {
+                    isSync = true;
+                    dataList.clear();
+                    adapter.replaceData(dataList);
+                    mBind.ivSync.startAnimation(animation);
+                    mBind.tvSync.setText("Stop");
+                } else {
+                    isSync = false;
+                    mBind.ivSync.clearAnimation();
+                    mBind.tvSync.setText("Sync");
+                }
+            }
+        }
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_B_D_ACC_REALTIME_DATA
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_B_CR_ACC_DATA
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_C_ACC_REALTIME_DATA
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_D_ACC_REALTIME_DATA
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_T_ACC_REALTIME_DATA
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_S_ACC_REALTIME_DATA
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_MK_TOF_ACC_REALTIME_DATA) {
+            //历史温湿度数据
+            Type type = new TypeToken<MsgNotify<AccData>>() {
+            }.getType();
+            MsgNotify<AccData> result = new Gson().fromJson(message, type);
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
+            AccData data = result.data;
+            data.timeStamp = Calendar.getInstance().getTimeInMillis() / 1000;
+            dataList.add(0, data);
+            adapter.replaceData(dataList);
+            mBind.tvExport.setEnabled(true);
+            exportStr.insert(0, "\n" + sdf.format(new Date(Calendar.getInstance().getTimeInMillis())) + "\tX-axis:" + data.x_axis_data +
+                    "\tY-axis:" + data.y_axis_data + "\tZ-axis:" + data.z_axis_data);
+        }
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_DISCONNECT) {
+            dismissLoadingProgressDialog();
+            mHandler.removeMessages(0);
+            Type type = new TypeToken<MsgNotify<JsonObject>>() {
+            }.getType();
+            MsgNotify<JsonObject> result = new Gson().fromJson(message, type);
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
+            finish();
+        }
+    }
+
+    public void onSync(View view) {
+        if (isWindowLocked()) return;
+        mHandler.postDelayed(() -> {
+            dismissLoadingProgressDialog();
+            ToastUtils.showToast(this, "Set up failed");
+        }, 30 * 1000);
+        showLoadingProgressDialog();
+        changeNotifyStatus(!isSync ? 1 : 0);
+    }
+
+    public void onExport(View view) {
+        if (isWindowLocked()) return;
+        showLoadingProgressDialog();
+        writeTrackedFile("");
+        mBind.tvExport.postDelayed(() -> {
+            dismissLoadingProgressDialog();
+            final String log = exportStr.toString();
+            if (!TextUtils.isEmpty(log)) {
+                writeTrackedFile(log);
+                File file = getTrackedFile();
+                // 发送邮件
+                String address = "Development@mokotechnology.com";
+                Utils.sendEmail(this, address, title, title, "Choose Email Client", file);
+            }
+        }, 500);
+    }
+
+    private void writeTrackedFile(String thLog) {
+        File file = new File(RemoteMainWithMetering02Activity.PATH_LOGCAT + File.separator + "accData.txt");
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write(thLog);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private File getTrackedFile() {
+        File file = new File(RemoteMainWithMetering02Activity.PATH_LOGCAT + File.separator + "accData.txt");
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+    private void changeNotifyStatus(int status) {
+        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_B_D_ACC_REALTIME_ENABLE;
+        if (mBeaconType == 2)
+            msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_B_CR_ACC_ENABLE;
+        if (mBeaconType == 3)
+            msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_C_ACC_REALTIME_ENABLE;
+        if (mBeaconType == 4)
+            msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_D_ACC_REALTIME_ENABLE;
+        if (mBeaconType == 5)
+            msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_T_ACC_REALTIME_ENABLE;
+        if (mBeaconType == 6)
+            msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_S_ACC_REALTIME_ENABLE;
+        if (mBeaconType == 8)
+            msgId = MQTTConstants.CONFIG_MSG_ID_BLE_MK_TOF_ACC_REALTIME_ENABLE;
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("mac", mac);
+        jsonObject.addProperty("switch_value", status);
+        String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
+        try {
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onBack(View view) {
+        back();
+    }
+
+    @Override
+    public void onBackPressed() {
+        back();
+    }
+
+    private void back() {
+        EventBus.getDefault().unregister(this);
+        if (isSync) changeNotifyStatus(0);
+        finish();
+    }
+}

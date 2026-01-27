@@ -1,0 +1,251 @@
+package com.moko.mkremotegw02.activity.beacon;
+
+import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
+import android.view.View;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.moko.lib.mqtt.MQTTSupport;
+import com.moko.lib.mqtt.entity.MsgNotify;
+import com.moko.lib.mqtt.event.DeviceOnlineEvent;
+import com.moko.lib.mqtt.event.MQTTMessageArrivedEvent;
+import com.moko.lib.scannerui.utils.ToastUtils;
+import com.moko.mkremotegw02.AppConstants;
+import com.moko.mkremotegw02.base.BaseActivity;
+import com.moko.mkremotegw02.databinding.ActivityBxpBCrRemoteReminder02Binding;
+import com.moko.mkremotegw02.entity.MQTTConfig;
+import com.moko.mkremotegw02.entity.MokoDevice;
+import com.moko.mkremotegw02.utils.SPUtiles;
+import com.moko.support.remotegw02.MQTTConstants;
+import com.moko.support.remotegw02.entity.BeaconInfo;
+
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.lang.reflect.Type;
+
+public class BXPBCRRemoteReminderActivity extends BaseActivity<ActivityBxpBCrRemoteReminder02Binding> {
+    private MokoDevice mMokoDevice;
+    private MQTTConfig appMqttConfig;
+    private String mAppTopic;
+    private String mMac;
+    private Handler mHandler;
+
+    @Override
+    protected void onCreate() {
+        mMokoDevice = (MokoDevice) getIntent().getSerializableExtra(AppConstants.EXTRA_KEY_DEVICE);
+        String mqttConfigAppStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
+        appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
+        mAppTopic = TextUtils.isEmpty(appMqttConfig.topicPublish) ? mMokoDevice.topicSubscribe : appMqttConfig.topicPublish;
+        mHandler = new Handler(Looper.getMainLooper());
+
+        mMac = getIntent().getStringExtra(AppConstants.EXTRA_KEY_MAC);
+    }
+
+    @Override
+    protected ActivityBxpBCrRemoteReminder02Binding getViewBinding() {
+        return ActivityBxpBCrRemoteReminder02Binding.inflate(getLayoutInflater());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMQTTMessageArrivedEvent(MQTTMessageArrivedEvent event) {
+        // 更新所有设备的网络状态
+        final String topic = event.getTopic();
+        final String message = event.getMessage();
+        if (TextUtils.isEmpty(message))
+            return;
+        int msg_id;
+        try {
+            JsonObject object = new Gson().fromJson(message, JsonObject.class);
+            JsonElement element = object.get("msg_id");
+            msg_id = element.getAsInt();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_DISCONNECT) {
+            dismissLoadingProgressDialog();
+            mHandler.removeMessages(0);
+            Type type = new TypeToken<MsgNotify<JsonObject>>() {
+            }.getType();
+            MsgNotify<JsonObject> result = new Gson().fromJson(message, type);
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac))
+                return;
+            finish();
+        }
+        if (msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_B_CR_LED
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_B_CR_BUZZER
+                || msg_id == MQTTConstants.NOTIFY_MSG_ID_BLE_BXP_B_CR_VIBRATION) {
+            dismissLoadingProgressDialog();
+            mHandler.removeMessages(0);
+            Type type = new TypeToken<MsgNotify<BeaconInfo>>() {
+            }.getType();
+            MsgNotify<BeaconInfo> result = new Gson().fromJson(message, type);
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
+            ToastUtils.showToast(this, result.data.result_code == 0 ? "Setup succeed!" : "Setup failed");
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDeviceOnlineEvent(DeviceOnlineEvent event) {
+        String mac = event.getMac();
+        if (!mMokoDevice.mac.equals(mac))
+            return;
+        boolean online = event.isOnline();
+        if (!online) {
+            ToastUtils.showToast(this, "device is off-line");
+            finish();
+        }
+    }
+
+    public void onLedNotifyRemind(View view) {
+        if (isWindowLocked()) return;
+        if (isLEDValid()) {
+            mHandler.postDelayed(() -> {
+                dismissLoadingProgressDialog();
+                ToastUtils.showToast(this, "Setup failed");
+            }, 30 * 1000);
+            showLoadingProgressDialog();
+            setLEDNotifyRemind();
+        } else {
+            ToastUtils.showToast(this, "Para Error");
+        }
+    }
+
+    public void onBuzzerNotifyRemind(View view) {
+        if (isWindowLocked()) return;
+        if (isBuzzerValid()) {
+            mHandler.postDelayed(() -> {
+                dismissLoadingProgressDialog();
+                ToastUtils.showToast(this, "Setup failed");
+            }, 30 * 1000);
+            showLoadingProgressDialog();
+            setBuzzerNotifyRemind();
+        } else {
+            ToastUtils.showToast(this, "Para Error");
+        }
+    }
+
+    public void onVibrationNotifyRemind(View view) {
+        if (isWindowLocked()) return;
+        if (isVibrationValid()) {
+            mHandler.postDelayed(() -> {
+                dismissLoadingProgressDialog();
+                ToastUtils.showToast(this, "Setup failed");
+            }, 30 * 1000);
+            showLoadingProgressDialog();
+            setVibrationNotifyRemind();
+        } else {
+            ToastUtils.showToast(this, "Para Error");
+        }
+    }
+
+    private void setLEDNotifyRemind() {
+        String ledTimeStr = mBind.etBlinkingTime.getText().toString();
+        String ledIntervalStr = mBind.etBlinkingInterval.getText().toString();
+        int ledTime = Integer.parseInt(ledTimeStr);
+        int ledInterval = Integer.parseInt(ledIntervalStr);
+        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_B_CR_LED;
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("mac", mMac);
+        jsonObject.addProperty("flash_time", ledTime);
+        jsonObject.addProperty("flash_interval", ledInterval);
+        String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
+        try {
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setBuzzerNotifyRemind() {
+        String buzzerTimeStr = mBind.etRingingTime.getText().toString();
+        String buzzerIntervalStr = mBind.etRingingInterval.getText().toString();
+        int buzzerTime = Integer.parseInt(buzzerTimeStr);
+        int buzzerInterval = Integer.parseInt(buzzerIntervalStr);
+        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_B_CR_BUZZER;
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("mac", mMac);
+        jsonObject.addProperty("ring_time", buzzerTime);
+        jsonObject.addProperty("ring_interval", buzzerInterval);
+        String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
+        try {
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setVibrationNotifyRemind() {
+        String vibrationTimeStr = mBind.etVibrationTime.getText().toString();
+        String vibrationIntervalStr = mBind.etVibrationInterval.getText().toString();
+        int vibrationTime = Integer.parseInt(vibrationTimeStr);
+        int vibrationInterval = Integer.parseInt(vibrationIntervalStr);
+        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_B_CR_VIBRATION;
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("mac", mMac);
+        jsonObject.addProperty("shake_time", vibrationTime);
+        jsonObject.addProperty("shake_interval", vibrationInterval);
+        String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
+        try {
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isBuzzerValid() {
+        String buzzerTimeStr = mBind.etRingingTime.getText().toString();
+        String buzzerIntervalStr = mBind.etRingingInterval.getText().toString();
+        if (TextUtils.isEmpty(buzzerTimeStr) || TextUtils.isEmpty(buzzerIntervalStr)) {
+            return false;
+        }
+        int buzzerTime = Integer.parseInt(buzzerTimeStr);
+        if (buzzerTime < 1 || buzzerTime > 6000)
+            return false;
+        int buzzerInterval = Integer.parseInt(buzzerIntervalStr);
+        if (buzzerInterval > 100)
+            return false;
+        return true;
+    }
+
+    private boolean isLEDValid() {
+        String ledTimeStr = mBind.etBlinkingTime.getText().toString();
+        String ledIntervalStr = mBind.etBlinkingInterval.getText().toString();
+        if (TextUtils.isEmpty(ledTimeStr) || TextUtils.isEmpty(ledIntervalStr)) {
+            return false;
+        }
+        int ledTime = Integer.parseInt(ledTimeStr);
+        if (ledTime < 1 || ledTime > 6000)
+            return false;
+        int ledInterval = Integer.parseInt(ledIntervalStr);
+        if (ledInterval > 100)
+            return false;
+        return true;
+    }
+
+    private boolean isVibrationValid() {
+        String shakeTimeStr = mBind.etVibrationTime.getText().toString();
+        String shakeIntervalStr = mBind.etVibrationInterval.getText().toString();
+        if (TextUtils.isEmpty(shakeTimeStr) || TextUtils.isEmpty(shakeIntervalStr)) {
+            return false;
+        }
+        int shakeTime = Integer.parseInt(shakeTimeStr);
+        if (shakeTime < 1 || shakeTime > 6000)
+            return false;
+        int shakeInterval = Integer.parseInt(shakeIntervalStr);
+        if (shakeInterval > 100)
+            return false;
+        return true;
+    }
+
+    public void onBack(View view) {
+        if (isWindowLocked()) return;
+        finish();
+    }
+}

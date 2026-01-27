@@ -49,6 +49,9 @@ public class FilterRawDataSwitch02Activity extends BaseActivity<ActivityFilterRa
         String mqttConfigAppStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
         appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
         mAppTopic = TextUtils.isEmpty(appMqttConfig.topicPublish) ? mMokoDevice.topicSubscribe : appMqttConfig.topicPublish;
+        mBind.rlFilterByTOF.setVisibility(mMokoDevice.deviceType != 0x10 ? View.VISIBLE : View.GONE);
+        mBind.rlFilterByNano.setVisibility(mMokoDevice.deviceType != 0x10 ? View.VISIBLE : View.GONE);
+        mBind.tvFilterByBxpTagTitle.setText(mMokoDevice.deviceType != 0x10 ? "BXP - Tag/Sensor" : "BXP - Tag");
         mHandler = new Handler(Looper.getMainLooper());
         mHandler.postDelayed(() -> {
             dismissLoadingProgressDialog();
@@ -97,9 +100,13 @@ public class FilterRawDataSwitch02Activity extends BaseActivity<ActivityFilterRa
             mBind.ivFilterByBxpAcc.setImageResource(isBXPAccOpen ? R.drawable.ic_checkbox_open : R.drawable.ic_checkbox_close);
             mBind.ivFilterByBxpTh.setImageResource(isBXPTHOpen ? R.drawable.ic_checkbox_open : R.drawable.ic_checkbox_close);
             mBind.tvFilterByBxpButton.setText(result.data.get("bxp_button").getAsInt() == 1 ? "ON" : "OFF");
-            mBind.tvFilterByBxpTag.setText(result.data.get("bxp_tag").getAsInt() == 1 ? "ON" : "OFF");
             mBind.tvFilterByPir.setText(result.data.get("pir").getAsInt() == 1 ? "ON" : "OFF");
             mBind.tvFilterByOther.setText(result.data.get("other").getAsInt() == 1 ? "ON" : "OFF");
+            mBind.tvFilterByBxpTag.setText(result.data.get("bxp_tag").getAsInt() == 1 ? "ON" : "OFF");
+            if (mMokoDevice.deviceType != 0x10) {
+                mBind.tvFilterByMKTOF.setText(result.data.get("mk_tof").getAsInt() == 1 ? "ON" : "OFF");
+                mBind.tvFilterByNano.setText(result.data.get("nano_beacon_info").getAsInt() == 1 ? "ON" : "OFF");
+            }
         }
         if (msg_id == MQTTConstants.CONFIG_MSG_ID_FILTER_BXP_DEVICE_INFO
                 || msg_id == MQTTConstants.CONFIG_MSG_ID_FILTER_BXP_ACC
@@ -295,6 +302,29 @@ public class FilterRawDataSwitch02Activity extends BaseActivity<ActivityFilterRa
         startFilterDetail.launch(i);
     }
 
+    public void onFilterByMKTOF(View view) {
+        if (isWindowLocked())
+            return;
+        if (!MQTTSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(this, R.string.network_error);
+            return;
+        }
+        Intent i = new Intent(this, FilterMKTOFActivity.class);
+        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
+        startFilterDetail.launch(i);
+    }
+
+    public void onFilterByNano(View view) {
+        if (isWindowLocked())
+            return;
+        if (!MQTTSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(this, R.string.network_error);
+            return;
+        }
+        Intent i = new Intent(this, FilterNanoActivity.class);
+        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
+        startFilterDetail.launch(i);
+    }
 
     public void onFilterByOther(View view) {
         if (isWindowLocked())

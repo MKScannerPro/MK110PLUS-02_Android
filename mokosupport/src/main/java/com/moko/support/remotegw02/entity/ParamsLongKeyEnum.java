@@ -13,6 +13,7 @@ public enum ParamsLongKeyEnum implements Serializable {
     KEY_WIFI_CA(0x48),
     KEY_WIFI_CLIENT_CERT(0x49),
     KEY_WIFI_CLIENT_KEY(0x4A),
+    KEY_WIFI_SEARCH_RESULT(0x51),
     KEY_FILTER_NAME_RULES(0x67),
     ;
 

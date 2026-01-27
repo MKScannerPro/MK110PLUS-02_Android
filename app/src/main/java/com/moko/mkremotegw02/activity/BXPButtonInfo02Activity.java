@@ -53,7 +53,7 @@ public class BXPButtonInfo02Activity extends BaseActivity<ActivityBxpButtonInfo0
         mAppTopic = TextUtils.isEmpty(appMqttConfig.topicPublish) ? mMokoDevice.topicSubscribe : appMqttConfig.topicPublish;
         mHandler = new Handler(Looper.getMainLooper());
 
-        mBXPButtonInfo = (BXPButtonInfo) getIntent().getSerializableExtra(AppConstants.EXTRA_KEY_BXP_BUTTON_INFO);
+        mBXPButtonInfo = (BXPButtonInfo) getIntent().getSerializableExtra(AppConstants.EXTRA_KEY_BEACON_INFO);
         mBind.tvDeviceName.setText(mMokoDevice.name);
         mBind.tvProductModel.setText(mBXPButtonInfo.product_model);
         mBind.tvManufacturer.setText(mBXPButtonInfo.company_name);
@@ -297,7 +297,7 @@ public class BXPButtonInfo02Activity extends BaseActivity<ActivityBxpButtonInfo0
     }
 
     private void getBXPButtonStatus() {
-        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_BUTTON_STATUS;
+        int msgId = MQTTConstants.CONFIG_MSG_ID_BLE_BXP_B_D_STATUS;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("mac", mBXPButtonInfo.mac);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);

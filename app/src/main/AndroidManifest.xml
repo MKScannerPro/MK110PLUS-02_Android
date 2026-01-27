@@ -29,7 +29,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.MqttSettings02Activity"
+            android:name="com.moko.mkremotegw02.activity.add.MqttSettings02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait" />
@@ -48,7 +48,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.DeviceScanner02Activity"
+            android:name="com.moko.mkremotegw02.activity.add.DeviceScanner02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
@@ -59,22 +59,22 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.DeviceSetting02Activity"
+            android:name="com.moko.mkremotegw02.activity.DeviceSetting02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.DeviceInfo02Activity"
+            android:name="com.moko.mkremotegw02.activity.settings.DeviceInfo02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.OTA02Activity"
+            android:name="com.moko.mkremotegw02.activity.settings.OTA02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.IndicatorSetting02Activity"
+            android:name="com.moko.mkremotegw02.activity.settings.IndicatorSetting02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
@@ -84,12 +84,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.CommunicationTimeout02Activity"
+            android:name="com.moko.mkremotegw02.activity.settings.CommunicationTimeout02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.NetworkReportInterval02Activity"
+            android:name="com.moko.mkremotegw02.activity.settings.NetworkReportInterval02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
@@ -147,33 +147,64 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.filter.UploadDataOption02Activity"
+            android:name="com.moko.mkremotegw02.activity.add.AdvSettingsActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.SyncTimeFromNTP02Activity"
+            android:name="com.moko.mkremotegw02.activity.add.ScanAndUploadActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.SystemTime02Activity"
+            android:name="com.moko.mkremotegw02.activity.add.NearbyWifiActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.ModifyMQTTSettings02Activity"
+            android:name="com.moko.mkremotegw02.activity.upload.UploadDataIntervalActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name="com.moko.mkremotegw02.activity.filter.FilterMKTOFActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.filter.FilterNanoActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.upload.UploadDataOption02Activity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.settings.SyncTimeFromNTP02Activity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.settings.SystemTime02Activity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.modify.ModifyMQTTSettings02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.DeviceConfig02Activity"
+            android:name="com.moko.mkremotegw02.activity.add.DeviceConfig02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.WifiSettings02Activity"
+            android:name="com.moko.mkremotegw02.activity.add.WifiSettings02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
@@ -183,22 +214,27 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.NtpSettings02Activity"
+            android:name="com.moko.mkremotegw02.activity.add.NtpSettings02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.ScannerFilter02Activity"
+            android:name="com.moko.mkremotegw02.activity.add.ScannerFilter02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.DeviceInformation02Activity"
+            android:name="com.moko.mkremotegw02.activity.add.DeviceInformation02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="com.moko.mkremotegw02.activity.BleManager02Activity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.BleManager02V2Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
@@ -209,12 +245,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.BleOtherInfo02Activity"
+            android:name="com.moko.mkremotegw02.activity.beacon.BleOtherInfo02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.ReconnectTimeout02Activity"
+            android:name="com.moko.mkremotegw02.activity.settings.ReconnectTimeout02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
@@ -236,22 +272,22 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.ModifyNetworkSettings02Activity"
+            android:name="com.moko.mkremotegw02.activity.modify.ModifyNetworkSettings02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.ModifySettings02Activity"
+            android:name="com.moko.mkremotegw02.activity.modify.ModifySettings02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.ModifyWifiSettings02Activity"
+            android:name="com.moko.mkremotegw02.activity.modify.ModifyWifiSettings02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.moko.mkremotegw02.activity.set.ButtonReset02Activity"
+            android:name="com.moko.mkremotegw02.activity.settings.ButtonReset02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
@@ -261,20 +297,184 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
-        <activity android:name="com.moko.mkremotegw02.activity.set.AdvertiseIBeacon02Activity"
+        <activity
+            android:name="com.moko.mkremotegw02.activity.add.AdvertiseIBeacon02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
 
-        <activity android:name="com.moko.mkremotegw02.activity.MeteringSettings02Activity"
+        <activity
+            android:name="com.moko.mkremotegw02.activity.MeteringSettings02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
 
-        <activity android:name="com.moko.mkremotegw02.activity.PowerMetering02Activity"
+        <activity
+            android:name="com.moko.mkremotegw02.activity.PowerMetering02Activity"
             android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPCActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.THDataActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPBDActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BeaconDFUv2Activity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPBDRemoteReminderActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPAccActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPBAdvParamsActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPBCRActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPBCRRemoteReminderActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPCRAlarmEventActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPCTHSampleRateActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPAdvParamsActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPDActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPDAccParamsActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPTActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPTRemoteReminderActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPTMotionEventActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPTAccParamsActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPTAdvParamsActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPSHallEventActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPSActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPSAdvParamsActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.BXPSTHHistoryDataActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.MKPIRActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.MKPIRSensorDataActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.MKPIRSensorParamsActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.MKAdvParamsActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.MKTOFActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.MKTOFSensorDataActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.MKTOFSensorParamsActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.moko.mkremotegw02.activity.beacon.MKTOFAdvParamsActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden|locale|layoutDirection"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
 
         <service android:name="com.moko.mkremotegw02.service.DfuService" />
         <provider

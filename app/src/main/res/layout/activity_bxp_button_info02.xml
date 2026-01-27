@@ -31,7 +31,6 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:clickable="true"
             android:gravity="center"
             android:onClick="onDisconnect"
             android:paddingLeft="16dp"
@@ -41,7 +40,7 @@
             android:textSize="15sp" />
     </RelativeLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -456,5 +455,5 @@ mode 3: long press, mode 4: Abnormal inactivity"
                 android:textColor="@color/black_333333"
                 android:textSize="15sp" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

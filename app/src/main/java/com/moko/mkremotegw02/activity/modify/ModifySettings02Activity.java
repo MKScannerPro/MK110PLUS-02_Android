@@ -198,17 +198,6 @@ public class ModifySettings02Activity extends BaseActivity<ActivityModifySetting
         }
     }
 
-    public void onNetworkSettings(View view) {
-        if (isWindowLocked()) return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, ModifyNetworkSettings02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startActivity(i);
-    }
-
     private void getMqttSettings() {
         int msgId = MQTTConstants.READ_MSG_ID_MQTT_SETTINGS;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);

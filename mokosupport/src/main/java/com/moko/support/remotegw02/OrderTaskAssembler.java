@@ -35,14 +35,10 @@ public class OrderTaskAssembler {
         return getHardwareVersionTask;
     }
 
-    public static OrderTask getFirmwareVersion() {
-        GetFirmwareRevisionTask getFirmwareVersionTask = new GetFirmwareRevisionTask();
-        return getFirmwareVersionTask;
-    }
-
-    public static OrderTask getSoftwareVersion() {
-        GetSoftwareRevisionTask getSoftwareVersionTask = new GetSoftwareRevisionTask();
-        return getSoftwareVersionTask;
+    public static OrderTask getWifiSoftwareVersion() {
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.KEY_WIFI_SOFTWARE_VERSION);
+        return task;
     }
 
     public static OrderTask getDeviceName() {
@@ -72,6 +68,18 @@ public class OrderTaskAssembler {
     public static OrderTask getBleMac() {
         ParamsTask task = new ParamsTask();
         task.setData(ParamsKeyEnum.KEY_BLE_MAC);
+        return task;
+    }
+
+    public static OrderTask getWifiFirmwareVersion() {
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.KEY_WIFI_FIRMWARE_VERSION);
+        return task;
+    }
+
+    public static OrderTask getBleFirmwareVersion() {
+        ParamsTask task = new ParamsTask();
+        task.setData(ParamsKeyEnum.KEY_BLE_FIRMWARE_VERSION);
         return task;
     }
 

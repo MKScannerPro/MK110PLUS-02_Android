@@ -90,7 +90,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_security"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -154,7 +154,8 @@
                 android:src="@drawable/ic_search"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/et_ssid"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                tools:visibility="visible" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_password"
@@ -201,7 +202,8 @@
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_password">
+                app:layout_constraintTop_toBottomOf="@id/cl_password"
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -238,7 +240,8 @@
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_username">
+                app:layout_constraintTop_toBottomOf="@id/cl_username"
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -275,7 +278,8 @@
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_eap_password">
+                app:layout_constraintTop_toBottomOf="@id/cl_eap_password"
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -317,7 +321,8 @@
                 android:visibility="gone"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cl_eap_password" />
+                app:layout_constraintTop_toBottomOf="@id/cl_eap_password"
+                tools:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/ll_ca"
@@ -329,7 +334,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cb_verify_server"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -371,7 +376,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ll_ca"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -413,7 +418,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ll_cert"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"

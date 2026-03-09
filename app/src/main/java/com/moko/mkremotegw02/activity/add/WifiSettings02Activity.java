@@ -160,7 +160,6 @@ public class WifiSettings02Activity extends BaseActivity<ActivityWifiSettings02B
                         }
                         if (flag == 0x01) {
                             // write
-                            // write
                             int result = value[4] & 0xFF;
                             switch (configKeyEnum) {
                                 case KEY_WIFI_CA:

@@ -34,17 +34,26 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWifiSettings02Binding> {
     private final String FILTER_ASCII = "[ -~]*";
-    private ArrayList<String> mSecurityValues;
-    private int mSecuritySelected;
-    private ArrayList<String> mEAPTypeValues;
-    private int mEAPTypeSelected;
     private MokoDevice mMokoDevice;
     private MQTTConfig appMqttConfig;
     private String mAppTopic;
     public Handler mHandler;
+    private final String[] mSecurityValues = {"Personal", "Enterprise"};
+    private int mSecuritySelected;
+    private final String[] mEAPTypeValues = {"PEAP-MSCHAPV2", "TTLS-MSCHAPV2", "TLS"};
+    private int mEAPTypeSelected;
+    private Pattern pattern;
+    private boolean wifiDhcpEnable;
+    private String wifiIp;
+    private String wifiMask;
+    private String wifiGateway;
+    private String wifiDns;
 
     @Override
     protected void onCreate() {
@@ -52,13 +61,8 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
             if (mSecuritySelected != 0 && mEAPTypeSelected != 2)
                 mBind.clCa.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
-        mSecurityValues = new ArrayList<>();
-        mSecurityValues.add("Personal");
-        mSecurityValues.add("Enterprise");
-        mEAPTypeValues = new ArrayList<>();
-        mEAPTypeValues.add("PEAP-MSCHAPV2");
-        mEAPTypeValues.add("TTLS-MSCHAPV2");
-        mEAPTypeValues.add("TLS");
+        String IP_REGEX = "((25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.){3}(25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))*";
+        pattern = Pattern.compile(IP_REGEX);
         InputFilter filter = (source, start, end, dest, dstart, dend) -> {
             if (!(source + "").matches(FILTER_ASCII)) {
                 return "";
@@ -85,6 +89,10 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
         }, 30 * 1000);
         showLoadingProgressDialog();
         getWifiSettings();
+        mBind.layoutIp.imgDhcp.setOnClickListener(v -> {
+            wifiDhcpEnable = !wifiDhcpEnable;
+            setDhcpEnable(wifiDhcpEnable);
+        });
     }
 
     @Override
@@ -94,7 +102,6 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMQTTMessageArrivedEvent(MQTTMessageArrivedEvent event) {
-        // 更新所有设备的网络状态
         final String message = event.getMessage();
         if (TextUtils.isEmpty(message)) return;
         int msg_id;
@@ -103,9 +110,9 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
             JsonElement element = object.get("msg_id");
             msg_id = element.getAsInt();
         } catch (Exception e) {
-            e.printStackTrace();
             return;
         }
+
         if (msg_id == MQTTConstants.READ_MSG_ID_WIFI_SETTINGS) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
@@ -117,11 +124,11 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
             mBind.etSsid.setText(result.data.get("ssid").getAsString());
             mBind.etPassword.setText(result.data.get("passwd").getAsString());
             mBind.etDomainId.setText(result.data.get("eap_id").getAsString());
-            mBind.tvSecurity.setText(mSecurityValues.get(mSecuritySelected));
+            mBind.tvSecurity.setText(mSecurityValues[mSecuritySelected]);
             mBind.clEapType.setVisibility(mSecuritySelected != 0 ? View.VISIBLE : View.GONE);
             mBind.clPassword.setVisibility(mSecuritySelected != 0 ? View.GONE : View.VISIBLE);
             mEAPTypeSelected = result.data.get("eap_type").getAsInt();
-            mBind.tvEapType.setText(mEAPTypeValues.get(mEAPTypeSelected));
+            mBind.tvEapType.setText(mEAPTypeValues[mEAPTypeSelected]);
             if (mSecuritySelected != 0) {
                 mBind.clUsername.setVisibility(mEAPTypeSelected == 2 ? View.GONE : View.VISIBLE);
                 mBind.etUsername.setText(result.data.get("eap_username").getAsString());
@@ -138,13 +145,28 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
                 mBind.clCert.setVisibility(mEAPTypeSelected == 2 ? View.VISIBLE : View.GONE);
                 mBind.clKey.setVisibility(mEAPTypeSelected == 2 ? View.VISIBLE : View.GONE);
             }
+            getNetworkSettings();
+        }
+        if (msg_id == MQTTConstants.READ_MSG_ID_NETWORK_SETTINGS) {
+            Type type = new TypeToken<MsgReadResult<JsonObject>>() {
+            }.getType();
+            MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
+            dismissLoadingProgressDialog();
+            mHandler.removeMessages(0);
+            wifiDhcpEnable = result.data.get("dhcp_en").getAsInt() == 1;
+            wifiIp = result.data.get("ip").getAsString();
+            wifiMask = result.data.get("netmask").getAsString();
+            wifiGateway = result.data.get("gw").getAsString();
+            wifiDns = result.data.get("dns").getAsString();
+            setDhcpEnable(wifiDhcpEnable);
+            setIpInfo();
         }
         if (msg_id == MQTTConstants.READ_MSG_ID_DEVICE_STATUS) {
             Type type = new TypeToken<MsgNotify<JsonObject>>() {
             }.getType();
             MsgNotify<JsonObject> result = new Gson().fromJson(message, type);
-            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac))
-                return;
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
             dismissLoadingProgressDialog();
             mHandler.removeMessages(0);
             int status = result.data.get("status").getAsInt();
@@ -160,17 +182,25 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
             setWifiSettings();
         }
         if (msg_id == MQTTConstants.CONFIG_MSG_ID_WIFI_SETTINGS) {
-            Type type = new TypeToken<MsgConfigResult>() {
+            Type type = new TypeToken<MsgConfigResult<?>>() {
             }.getType();
-            MsgConfigResult result = new Gson().fromJson(message, type);
-            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac))
-                return;
+            MsgConfigResult<?> result = new Gson().fromJson(message, type);
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
+            if (result.result_code != 0) return;
+            setIpConfig();
+        }
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_NETWORK_SETTINGS) {
+            Type type = new TypeToken<MsgConfigResult<?>>() {
+            }.getType();
+            MsgConfigResult<?> result = new Gson().fromJson(message, type);
+            if (!mMokoDevice.mac.equalsIgnoreCase(result.device_info.mac)) return;
             dismissLoadingProgressDialog();
             mHandler.removeMessages(0);
             if (result.result_code == 0) {
-                ToastUtils.showToast(this, "Set up succeed");
-                if (mSecuritySelected == 0)
+                if (mSecuritySelected == 0) {
+                    ToastUtils.showToast(this, "Set up succeed");
                     return;
+                }
                 String caFileUrl = mBind.etCaFileUrl.getText().toString();
                 String certFileUrl = mBind.etCertFileUrl.getText().toString();
                 String keyFileUrl = mBind.etKeyFileUrl.getText().toString();
@@ -188,7 +218,7 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
                 mHandler.postDelayed(() -> {
                     dismissLoadingProgressDialog();
                     finish();
-                }, 50 * 1000);
+                }, 60 * 1000);
                 showLoadingProgressDialog();
                 setWifiCertFile();
             } else {
@@ -211,6 +241,45 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
         }
     }
 
+    private void setIpConfig() {
+        int msgId = MQTTConstants.CONFIG_MSG_ID_NETWORK_SETTINGS;
+        JsonObject jsonObject = new JsonObject();
+        int enable = wifiDhcpEnable ? 1 : 0;
+        jsonObject.addProperty("dhcp_en", enable);
+        jsonObject.addProperty("ip", mBind.layoutIp.etIp.getText().toString());
+        jsonObject.addProperty("netmask", mBind.layoutIp.etMask.getText().toString());
+        jsonObject.addProperty("gw", mBind.layoutIp.etGateway.getText().toString());
+        jsonObject.addProperty("dns", mBind.layoutIp.etDns.getText().toString());
+        String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
+        try {
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+        } catch (MqttException e) {
+            XLog.e(e);
+        }
+    }
+
+    private void getNetworkSettings() {
+        int msgId = MQTTConstants.READ_MSG_ID_NETWORK_SETTINGS;
+        String message = assembleReadCommon(msgId, mMokoDevice.mac);
+        try {
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+        } catch (MqttException e) {
+            XLog.e(e);
+        }
+    }
+
+    private void setDhcpEnable(boolean enable) {
+        mBind.layoutIp.imgDhcp.setImageResource(enable ? R.drawable.ic_checkbox_open : R.drawable.ic_checkbox_close);
+        mBind.layoutIp.clIp.setVisibility(enable ? View.GONE : View.VISIBLE);
+    }
+
+    private void setIpInfo() {
+        mBind.layoutIp.etIp.setText(wifiIp);
+        mBind.layoutIp.etMask.setText(wifiMask);
+        mBind.layoutIp.etGateway.setText(wifiGateway);
+        mBind.layoutIp.etDns.setText(wifiDns);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeviceOnlineEvent(DeviceOnlineEvent event) {
         super.offline(event, mMokoDevice.mac);
@@ -218,6 +287,23 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
 
     public void onBack(View view) {
         finish();
+    }
+
+    private void setWifiCertFile() {
+        String caFileUrl = mBind.etCaFileUrl.getText().toString();
+        String certFileUrl = mBind.etCertFileUrl.getText().toString();
+        String keyFileUrl = mBind.etKeyFileUrl.getText().toString();
+        int msgId = MQTTConstants.CONFIG_MSG_ID_WIFI_CERT_FILE;
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("ca_url", caFileUrl);
+        jsonObject.addProperty("client_cert_url", certFileUrl);
+        jsonObject.addProperty("client_key_url", keyFileUrl);
+        String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
+        try {
+            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
+        } catch (MqttException e) {
+            XLog.e(e);
+        }
     }
 
     private void setWifiSettings() {
@@ -240,24 +326,7 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
         try {
             MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setWifiCertFile() {
-        String caFileUrl = mBind.etCaFileUrl.getText().toString();
-        String certFileUrl = mBind.etCertFileUrl.getText().toString();
-        String keyFileUrl = mBind.etKeyFileUrl.getText().toString();
-        int msgId = MQTTConstants.CONFIG_MSG_ID_WIFI_CERT_FILE;
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("ca_url", caFileUrl);
-        jsonObject.addProperty("client_cert_url", certFileUrl);
-        jsonObject.addProperty("client_key_url", keyFileUrl);
-        String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
-        try {
-            MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
-        } catch (MqttException e) {
-            e.printStackTrace();
+            XLog.e(e);
         }
     }
 
@@ -267,17 +336,17 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
         try {
             MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
-            e.printStackTrace();
+            XLog.e(e);
         }
     }
 
     public void onSelectSecurity(View view) {
         if (isWindowLocked()) return;
         BottomDialog dialog = new BottomDialog();
-        dialog.setDatas(mSecurityValues, mSecuritySelected);
+        dialog.setDatas(new ArrayList<>(Arrays.asList(mSecurityValues)), mSecuritySelected);
         dialog.setListener(value -> {
             mSecuritySelected = value;
-            mBind.tvSecurity.setText(mSecurityValues.get(value));
+            mBind.tvSecurity.setText(mSecurityValues[value]);
             mBind.clEapType.setVisibility(mSecuritySelected != 0 ? View.VISIBLE : View.GONE);
             mBind.clPassword.setVisibility(mSecuritySelected != 0 ? View.GONE : View.VISIBLE);
             if (mSecuritySelected == 0) {
@@ -308,10 +377,10 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
     public void onSelectEAPType(View view) {
         if (isWindowLocked()) return;
         BottomDialog dialog = new BottomDialog();
-        dialog.setDatas(mEAPTypeValues, mEAPTypeSelected);
+        dialog.setDatas(new ArrayList<>(Arrays.asList(mEAPTypeValues)), mEAPTypeSelected);
         dialog.setListener(value -> {
             mEAPTypeSelected = value;
-            mBind.tvEapType.setText(mEAPTypeValues.get(value));
+            mBind.tvEapType.setText(mEAPTypeValues[value]);
             mBind.clUsername.setVisibility(mEAPTypeSelected == 2 ? View.GONE : View.VISIBLE);
             mBind.clEapPassword.setVisibility(mEAPTypeSelected == 2 ? View.GONE : View.VISIBLE);
             mBind.cbVerifyServer.setVisibility(mEAPTypeSelected == 2 ? View.INVISIBLE : View.VISIBLE);
@@ -338,16 +407,27 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
 
     private boolean isParaError() {
         String ssid = mBind.etSsid.getText().toString();
-        if (TextUtils.isEmpty(ssid))
-            return true;
-//        if (mSecuritySelected != 0) {
-//            if (mEAPTypeSelected != 2 && !mBind.cbVerifyServer.isChecked()) {
-//                return false;
-//            }
-//            String caFileUrl = mBind.etCaFileUrl.getText().toString();
-//            if (TextUtils.isEmpty(caFileUrl))
-//                return true;
-//        }
+        if (TextUtils.isEmpty(ssid)) return true;
+        if (!wifiDhcpEnable) {
+            //检查ip地址是否合法
+            String ip = mBind.layoutIp.etIp.getText().toString();
+            String mask = mBind.layoutIp.etMask.getText().toString();
+            String gateway = mBind.layoutIp.etGateway.getText().toString();
+            String dns = mBind.layoutIp.etDns.getText().toString();
+            Matcher matcherIp = pattern.matcher(ip);
+            Matcher matcherMask = pattern.matcher(mask);
+            Matcher matcherGateway = pattern.matcher(gateway);
+            Matcher matcherDns = pattern.matcher(dns);
+            if (!matcherIp.matches()
+                    || !matcherMask.matches()
+                    || !matcherGateway.matches()
+                    || !matcherDns.matches())
+                return true;
+            wifiIp = ip;
+            wifiMask = mask;
+            wifiGateway = gateway;
+            wifiDns = dns;
+        }
         return false;
     }
 
@@ -371,7 +451,7 @@ public class ModifyWifiSettings02Activity extends BaseActivity<ActivityModifyWif
         try {
             MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
-            e.printStackTrace();
+            XLog.e(e);
         }
     }
 }

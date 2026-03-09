@@ -219,125 +219,54 @@ public class FilterRawDataSwitch02Activity extends BaseActivity<ActivityFilterRa
     }
 
     public void onFilterByIBeacon(View view) {
-        if (isWindowLocked())
-            return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterIBeacon02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startFilterDetail.launch(i);
+        start(FilterIBeacon02Activity.class);
     }
 
     public void onFilterByUid(View view) {
-        if (isWindowLocked())
-            return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterUID02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startFilterDetail.launch(i);
+        start(FilterUID02Activity.class);
     }
 
     public void onFilterByUrl(View view) {
-        if (isWindowLocked())
-            return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterUrl02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startFilterDetail.launch(i);
+        start(FilterUrl02Activity.class);
     }
 
     public void onFilterByTlm(View view) {
-        if (isWindowLocked())
-            return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterTLM02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startFilterDetail.launch(i);
+        start(FilterTLM02Activity.class);
     }
 
     public void onFilterByBXPButton(View view) {
-        if (isWindowLocked())
-            return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterBXPButton02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startFilterDetail.launch(i);
+        start(FilterBXPButton02Activity.class);
     }
 
     public void onFilterByBXPTag(View view) {
-        if (isWindowLocked())
-            return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterBXPTag02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startFilterDetail.launch(i);
+        start(FilterBXPTag02Activity.class);
     }
 
     public void onFilterByPIRPresence(View view) {
-        if (isWindowLocked())
-            return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterPIR02Activity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startFilterDetail.launch(i);
+        start(FilterPIR02Activity.class);
     }
 
     public void onFilterByMKTOF(View view) {
-        if (isWindowLocked())
-            return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterMKTOFActivity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startFilterDetail.launch(i);
+        start(FilterMKTOFActivity.class);
     }
 
     public void onFilterByNano(View view) {
-        if (isWindowLocked())
-            return;
-        if (!MQTTSupport.getInstance().isConnected()) {
-            ToastUtils.showToast(this, R.string.network_error);
-            return;
-        }
-        Intent i = new Intent(this, FilterNanoActivity.class);
-        i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
-        startFilterDetail.launch(i);
+        start(FilterNanoActivity.class);
     }
 
     public void onFilterByOther(View view) {
-        if (isWindowLocked())
-            return;
+        start(FilterOther02Activity.class);
+    }
+    private void start(Class<?> clazz) {
+        if (isWindowLocked()) return;
         if (!MQTTSupport.getInstance().isConnected()) {
             ToastUtils.showToast(this, R.string.network_error);
             return;
         }
-        Intent i = new Intent(this, FilterOther02Activity.class);
+        Intent i = new Intent(this, clazz);
         i.putExtra(AppConstants.EXTRA_KEY_DEVICE, mMokoDevice);
         startFilterDetail.launch(i);
     }
-
     private final ActivityResultLauncher<Intent> startFilterDetail = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         showLoadingProgressDialog();
         mHandler.postDelayed(() -> {

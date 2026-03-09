@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.elvishew.xlog.XLog;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -56,7 +57,6 @@ public class DeviceInfo02Activity extends BaseActivity<ActivityDeviceInformation
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMQTTMessageArrivedEvent(MQTTMessageArrivedEvent event) {
         // 更新所有设备的网络状态
-        final String topic = event.getTopic();
         final String message = event.getMessage();
         if (TextUtils.isEmpty(message)) return;
         int msg_id;
@@ -65,7 +65,7 @@ public class DeviceInfo02Activity extends BaseActivity<ActivityDeviceInformation
             JsonElement element = object.get("msg_id");
             msg_id = element.getAsInt();
         } catch (Exception e) {
-            e.printStackTrace();
+            XLog.e(e);
             return;
         }
         if (msg_id == MQTTConstants.READ_MSG_ID_DEVICE_INFO) {
@@ -80,9 +80,10 @@ public class DeviceInfo02Activity extends BaseActivity<ActivityDeviceInformation
             mBind.tvManufacturer.setText(result.data.get("company_name").getAsString());
             mBind.tvDeviceHardwareVersion.setText(result.data.get("hardware_version").getAsString());
             mBind.tvDeviceSoftwareVersion.setText(result.data.get("software_version").getAsString());
-            mBind.tvDeviceFirmwareVersion.setText(result.data.get("firmware_version").getAsString());
-            mBind.tvDeviceStaMac.setText(result.device_info.mac.toUpperCase());
-            mBind.tvDeviceBtMac.setText(result.data.get("ble_mac").getAsString().toUpperCase());
+            mBind.tvWifiFirmwareVersion.setText(result.data.get("firmware_version").getAsString());
+            mBind.tvBtFirmwareVersion.setText(result.data.get("sl_ble_version").getAsString());
+            mBind.tvWifiMac.setText(result.data.get("wifi_mac").getAsString().toUpperCase());
+            mBind.tvBtMac.setText(result.data.get("ble_mac").getAsString().toUpperCase());
         }
     }
 
@@ -101,7 +102,7 @@ public class DeviceInfo02Activity extends BaseActivity<ActivityDeviceInformation
         try {
             MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
         } catch (MqttException e) {
-            e.printStackTrace();
+            XLog.e(e);
         }
     }
 }

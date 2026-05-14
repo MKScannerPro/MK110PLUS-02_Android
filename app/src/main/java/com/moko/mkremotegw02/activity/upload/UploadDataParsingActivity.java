@@ -16,8 +16,9 @@ import com.moko.lib.mqtt.event.DeviceOnlineEvent;
 import com.moko.lib.mqtt.event.MQTTMessageArrivedEvent;
 import com.moko.lib.scannerui.utils.ToastUtils;
 import com.moko.mkremotegw02.AppConstants;
+import com.moko.mkremotegw02.R;
 import com.moko.mkremotegw02.base.BaseActivity;
-import com.moko.mkremotegw02.databinding.ActivityUploadDataOption02Binding;
+import com.moko.mkremotegw02.databinding.ActivityUploadDataParsing02Binding;
 import com.moko.mkremotegw02.entity.MQTTConfig;
 import com.moko.mkremotegw02.entity.MokoDevice;
 import com.moko.mkremotegw02.utils.SPUtiles;
@@ -29,7 +30,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.Type;
 
-public class UploadDataOption02Activity extends BaseActivity<ActivityUploadDataOption02Binding> {
+public class UploadDataParsingActivity extends BaseActivity<ActivityUploadDataParsing02Binding> {
 
     private MokoDevice mMokoDevice;
     private MQTTConfig appMqttConfig;
@@ -43,22 +44,20 @@ public class UploadDataOption02Activity extends BaseActivity<ActivityUploadDataO
         String mqttConfigAppStr = SPUtiles.getStringValue(this, AppConstants.SP_KEY_MQTT_CONFIG_APP, "");
         appMqttConfig = new Gson().fromJson(mqttConfigAppStr, MQTTConfig.class);
         mAppTopic = TextUtils.isEmpty(appMqttConfig.topicPublish) ? mMokoDevice.topicSubscribe : appMqttConfig.topicPublish;
-        mBind.cbRawDataAdv.setText(mMokoDevice.deviceType == 0x10 ? "RAW Data-Advertising" : "ADV data");
-        mBind.cbRawDataRsp.setVisibility(mMokoDevice.deviceType == 0x10 ? View.VISIBLE : View.GONE);
-
         mHandler = new Handler(Looper.getMainLooper());
         mHandler.postDelayed(() -> {
             dismissLoadingProgressDialog();
-            finish();
+            UploadDataParsingActivity.this.finish();
         }, 30 * 1000);
         showLoadingProgressDialog();
-        getUploadDataOption();
+        getDataParsing();
     }
 
     @Override
-    protected ActivityUploadDataOption02Binding getViewBinding() {
-        return ActivityUploadDataOption02Binding.inflate(getLayoutInflater());
+    protected ActivityUploadDataParsing02Binding getViewBinding() {
+        return ActivityUploadDataParsing02Binding.inflate(getLayoutInflater());
     }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMQTTMessageArrivedEvent(MQTTMessageArrivedEvent event) {
@@ -76,7 +75,7 @@ public class UploadDataOption02Activity extends BaseActivity<ActivityUploadDataO
             e.printStackTrace();
             return;
         }
-        if (msg_id == MQTTConstants.READ_MSG_ID_UPLOAD_DATA_OPTION) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_DATA_PARSING) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
             MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
@@ -84,12 +83,21 @@ public class UploadDataOption02Activity extends BaseActivity<ActivityUploadDataO
                 return;
             dismissLoadingProgressDialog();
             mHandler.removeMessages(0);
-            mBind.cbTimestamp.setChecked(result.data.get("timestamp").getAsInt() == 1);
-            mBind.cbRawDataAdv.setChecked(result.data.get("adv_data").getAsInt() == 1);
-            if (mMokoDevice.deviceType == 0x10)
-                mBind.cbRawDataRsp.setChecked(result.data.get("rsp_data").getAsInt() == 1);
+
+            mBind.cbIBeacon.setChecked(result.data.get("iBeacon_switch").getAsInt() == 1);
+            mBind.cbEddystoneUID.setChecked(result.data.get("eddystone_uid_switch").getAsInt() == 1);
+            mBind.cbEddystoneTLM.setChecked(result.data.get("eddystone_tlm_switch").getAsInt() == 1);
+            mBind.cbEddystoneURL.setChecked(result.data.get("eddystone_url_switch").getAsInt() == 1);
+            mBind.cbBXPACC.setChecked(result.data.get("bxp_acc_switch").getAsInt() == 1);
+            mBind.cbBXPTH.setChecked(result.data.get("bxp_th_switch").getAsInt() == 1);
+            mBind.cbBXPDeviceInfo.setChecked(result.data.get("bxp_devinfo_switch").getAsInt() == 1);
+            mBind.cbBXPButton.setChecked(result.data.get("bxp_button_switch").getAsInt() == 1);
+            mBind.cbBXPTag.setChecked(result.data.get("bxp_tag&sensor_switch").getAsInt() == 1);
+            mBind.cbPIR.setChecked(result.data.get("mk_pir_switch").getAsInt() == 1);
+            mBind.cbMKTof.setChecked(result.data.get("mk_tof_switch").getAsInt() == 1);
+            mBind.cbNano.setChecked(result.data.get("nanobeacon_info_switch").getAsInt() == 1);
         }
-        if (msg_id == MQTTConstants.CONFIG_MSG_ID_UPLOAD_DATA_OPTION) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_DATA_PARSING) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -114,13 +122,22 @@ public class UploadDataOption02Activity extends BaseActivity<ActivityUploadDataO
         finish();
     }
 
-    private void setUploadDataOption() {
-        int msgId = MQTTConstants.CONFIG_MSG_ID_UPLOAD_DATA_OPTION;
+
+    private void setFilterBXPButton() {
+        int msgId = MQTTConstants.CONFIG_MSG_ID_DATA_PARSING;
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("timestamp", mBind.cbTimestamp.isChecked() ? 1 : 0);
-        jsonObject.addProperty("adv_data", mBind.cbRawDataAdv.isChecked() ? 1 : 0);
-        if (mMokoDevice.deviceType == 0x10)
-            jsonObject.addProperty("rsp_data", mBind.cbRawDataRsp.isChecked() ? 1 : 0);
+        jsonObject.addProperty("iBeacon_switch", mBind.cbIBeacon.isChecked() ? 1 : 0);
+        jsonObject.addProperty("eddystone_uid_switch", mBind.cbEddystoneUID.isChecked() ? 1 : 0);
+        jsonObject.addProperty("eddystone_tlm_switch", mBind.cbEddystoneTLM.isChecked() ? 1 : 0);
+        jsonObject.addProperty("eddystone_url_switch",  mBind.cbEddystoneURL.isChecked() ? 1 : 0);
+        jsonObject.addProperty("bxp_acc_switch", mBind.cbBXPACC.isChecked() ? 1 : 0);
+        jsonObject.addProperty("bxp_th_switch", mBind.cbBXPTH.isChecked() ? 1 : 0);
+        jsonObject.addProperty("bxp_devinfo_switch", mBind.cbBXPDeviceInfo.isChecked() ? 1 : 0);
+        jsonObject.addProperty("bxp_button_switch", mBind.cbBXPButton.isChecked() ? 1 : 0);
+        jsonObject.addProperty("bxp_tag&sensor_switch", mBind.cbBXPTag.isChecked() ? 1 : 0);
+        jsonObject.addProperty("mk_pir_switch", mBind.cbPIR.isChecked() ? 1 : 0);
+        jsonObject.addProperty("mk_tof_switch", mBind.cbMKTof.isChecked() ? 1 : 0);
+        jsonObject.addProperty("nanobeacon_info_switch", mBind.cbNano.isChecked() ? 1 : 0);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
         try {
             MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
@@ -129,8 +146,8 @@ public class UploadDataOption02Activity extends BaseActivity<ActivityUploadDataO
         }
     }
 
-    private void getUploadDataOption() {
-        int msgId = MQTTConstants.READ_MSG_ID_UPLOAD_DATA_OPTION;
+    private void getDataParsing() {
+        int msgId = MQTTConstants.READ_MSG_ID_DATA_PARSING;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
             MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);
@@ -140,13 +157,16 @@ public class UploadDataOption02Activity extends BaseActivity<ActivityUploadDataO
     }
 
     public void onSave(View view) {
-        if (isWindowLocked())
+        if (isWindowLocked()) return;
+        if (!MQTTSupport.getInstance().isConnected()) {
+            ToastUtils.showToast(this, R.string.network_error);
             return;
+        }
         mHandler.postDelayed(() -> {
             dismissLoadingProgressDialog();
             ToastUtils.showToast(this, "Set up failed");
         }, 30 * 1000);
         showLoadingProgressDialog();
-        setUploadDataOption();
+        setFilterBXPButton();
     }
 }

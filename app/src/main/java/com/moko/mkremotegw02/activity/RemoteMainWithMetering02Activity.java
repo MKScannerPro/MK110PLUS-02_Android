@@ -73,6 +73,7 @@ import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
 import okhttp3.RequestBody;
 
 public class RemoteMainWithMetering02Activity extends BaseActivity<ActivityMainRemoteWithMetering02Binding> implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener {
@@ -309,22 +310,22 @@ public class RemoteMainWithMetering02Activity extends BaseActivity<ActivityMainR
     public void mainAddDevices(View view) {
         if (isWindowLocked())
             return;
-        if (TextUtils.isEmpty(mAppMqttConfigStr)) {
-            startActivityForResult(new Intent(this, SetAppMQTT02Activity.class), AppConstants.REQUEST_CODE_MQTT_CONFIG_APP);
-            return;
-        }
-        if (Utils.isNetworkAvailable(this)) {
-            MQTTConfig MQTTAppConfig = new Gson().fromJson(mAppMqttConfigStr, MQTTConfig.class);
-            if (TextUtils.isEmpty(MQTTAppConfig.host)) {
-                startActivityForResult(new Intent(this, SetAppMQTT02Activity.class), AppConstants.REQUEST_CODE_MQTT_CONFIG_APP);
-                return;
-            }
-            startActivity(new Intent(this, DeviceScanner02Activity.class));
-        } else {
-            String ssid = Utils.getWifiSSID(this);
-            ToastUtils.showToast(this, String.format("SSID:%s, the network cannot available,please check", ssid));
-            XLog.i(String.format("SSID:%s, the network cannot available,please check", ssid));
-        }
+//        if (TextUtils.isEmpty(mAppMqttConfigStr)) {
+//            startActivityForResult(new Intent(this, SetAppMQTTActivity.class), AppConstants.REQUEST_CODE_MQTT_CONFIG_APP);
+//            return;
+//        }
+//        if (Utils.isNetworkAvailable(this)) {
+//            MQTTConfig MQTTAppConfig = new Gson().fromJson(mAppMqttConfigStr, MQTTConfig.class);
+//            if (TextUtils.isEmpty(MQTTAppConfig.host)) {
+//                startActivityForResult(new Intent(this, SetAppMQTTActivity.class), AppConstants.REQUEST_CODE_MQTT_CONFIG_APP);
+//                return;
+//            }
+        startActivity(new Intent(this, DeviceScanner02Activity.class));
+//        } else {
+//            String ssid = Utils.getWifiSSID(this);
+//            ToastUtils.showToast(this, String.format("SSID:%s, the network cannot available,please check", ssid));
+//            XLog.i(String.format("SSID:%s, the network cannot available,please check", ssid));
+//        }
     }
 
     public void mainSyncDevices(View view) {

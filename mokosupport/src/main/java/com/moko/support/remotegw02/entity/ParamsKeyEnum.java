@@ -83,6 +83,9 @@ public enum ParamsKeyEnum implements Serializable {
     KEY_POWER_REPORT_INTERVAL(0x81),
     KEY_ENERGY_REPORT_INTERVAL(0x82),
     KEY_LOAD_DETECTION_NOTIFY_ENABLE(0x83),
+
+    // 设备模式
+    KEY_DEVICE_MODE(0xC0)
     ;
 
     private final int paramsKey;

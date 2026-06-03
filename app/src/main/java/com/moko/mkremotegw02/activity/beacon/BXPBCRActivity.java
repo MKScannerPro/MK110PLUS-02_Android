@@ -46,7 +46,7 @@ public class BXPBCRActivity extends BaseActivity<ActivityBxpBCrInfo02Binding> {
     private String mAppTopic;
     private BeaconInfo mBeaconInfo;
     private Handler mHandler;
-    private String[] mAdvMode = {"Battery voltage", "Battery percentage"};
+    private String[] mAdvMode = {"Battery percentage", "Battery voltage"};
 
     @Override
     protected void onCreate() {

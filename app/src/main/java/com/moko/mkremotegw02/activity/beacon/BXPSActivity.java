@@ -49,7 +49,7 @@ public class BXPSActivity extends BaseActivity<ActivityBxpSInfo02Binding> {
     private String mAppTopic;
     private BeaconInfo mBeaconInfo;
     private Handler mHandler;
-    private String[] mAdvMode = {"Battery voltage", "Battery percentage"};
+    private String[] mAdvMode = {"Battery percentage", "Battery voltage"};
 
     @Override
     protected ActivityBxpSInfo02Binding getViewBinding() {

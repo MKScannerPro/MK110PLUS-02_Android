@@ -37,11 +37,10 @@ public class DeviceInformation02Activity extends BaseActivity<ActivityDeviceInfo
             orderTasks.add(OrderTaskAssembler.getDeviceModel());
             orderTasks.add(OrderTaskAssembler.getManufacturer());
             orderTasks.add(OrderTaskAssembler.getHardwareVersion());
-            orderTasks.add(OrderTaskAssembler.getWifiSoftwareVersion());
+            orderTasks.add(OrderTaskAssembler.getSoftwareVersion());
             orderTasks.add(OrderTaskAssembler.getWifiFirmwareVersion());
-            if (selectedDeviceType != 0x10) {
+            if (selectedDeviceType != 0x10)
                 orderTasks.add(OrderTaskAssembler.getBleFirmwareVersion());
-            }
             orderTasks.add(OrderTaskAssembler.getWifiMac());
             orderTasks.add(OrderTaskAssembler.getBleMac());
             MokoSupport.getInstance().sendOrder(orderTasks.toArray(new OrderTask[]{}));
@@ -84,6 +83,9 @@ public class DeviceInformation02Activity extends BaseActivity<ActivityDeviceInfo
                     break;
                 case CHAR_HARDWARE_REVISION:
                     mBind.tvDeviceHardwareVersion.setText(new String(value));
+                    break;
+                case CHAR_SOFTWARE_REVISION:
+                    mBind.tvDeviceSoftwareVersion.setText(new String(value));
                     break;
                 case CHAR_PARAMS:
                     if (value.length >= 4) {

@@ -82,7 +82,7 @@ public class DeviceInfo02Activity extends BaseActivity<ActivityDeviceInformation
             mBind.tvDeviceSoftwareVersion.setText(result.data.get("software_version").getAsString());
             mBind.tvWifiFirmwareVersion.setText(result.data.get("firmware_version").getAsString());
             mBind.tvBtFirmwareVersion.setText(result.data.get("sl_ble_version").getAsString());
-            mBind.tvWifiMac.setText(result.data.get("wifi_mac").getAsString().toUpperCase());
+            mBind.tvWifiMac.setText(result.device_info.mac.toUpperCase());
             mBind.tvBtMac.setText(result.data.get("ble_mac").getAsString().toUpperCase());
         }
     }

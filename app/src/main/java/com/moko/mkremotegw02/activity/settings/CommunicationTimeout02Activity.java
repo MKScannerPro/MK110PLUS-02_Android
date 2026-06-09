@@ -72,7 +72,7 @@ public class CommunicationTimeout02Activity extends BaseActivity<ActivityCommuni
             e.printStackTrace();
             return;
         }
-        if (msg_id == MQTTConstants.READ_MSG_ID_COMMUNICATION_TIMEOUT) {
+        if (msg_id == MQTTConstants.READ_MSG_ID_COMMUNICATION_TIMEOUT || msg_id == MQTTConstants.READ_MSG_ID_BLE_CONNECT_TIMEOUT) {
             Type type = new TypeToken<MsgReadResult<JsonObject>>() {
             }.getType();
             MsgReadResult<JsonObject> result = new Gson().fromJson(message, type);
@@ -82,7 +82,7 @@ public class CommunicationTimeout02Activity extends BaseActivity<ActivityCommuni
             mHandler.removeMessages(0);
             mBind.etCommunicationTimeout.setText(String.valueOf(result.data.get("timeout").getAsInt()));
         }
-        if (msg_id == MQTTConstants.CONFIG_MSG_ID_COMMUNICATION_TIMEOUT) {
+        if (msg_id == MQTTConstants.CONFIG_MSG_ID_COMMUNICATION_TIMEOUT || msg_id == MQTTConstants.CONFIG_MSG_ID_BLE_CONNECT_TIMEOUT) {
             Type type = new TypeToken<MsgConfigResult>() {
             }.getType();
             MsgConfigResult result = new Gson().fromJson(message, type);
@@ -109,6 +109,7 @@ public class CommunicationTimeout02Activity extends BaseActivity<ActivityCommuni
 
     private void setCommunicationTimeout(int timeout) {
         int msgId = MQTTConstants.CONFIG_MSG_ID_COMMUNICATION_TIMEOUT;
+        if (mMokoDevice.deviceType == 0x11) msgId = MQTTConstants.CONFIG_MSG_ID_BLE_CONNECT_TIMEOUT;
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("timeout", timeout);
         String message = assembleWriteCommonData(msgId, mMokoDevice.mac, jsonObject);
@@ -122,6 +123,8 @@ public class CommunicationTimeout02Activity extends BaseActivity<ActivityCommuni
 
     private void getCommunicationTimeout() {
         int msgId = MQTTConstants.READ_MSG_ID_COMMUNICATION_TIMEOUT;
+        if (mMokoDevice.deviceType == 0x11)
+            msgId = MQTTConstants.READ_MSG_ID_BLE_CONNECT_TIMEOUT;
         String message = assembleReadCommon(msgId, mMokoDevice.mac);
         try {
             MQTTSupport.getInstance().publish(mAppTopic, message, msgId, appMqttConfig.qos);

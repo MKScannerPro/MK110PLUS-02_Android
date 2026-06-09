@@ -35,6 +35,11 @@ public class OrderTaskAssembler {
         return getHardwareVersionTask;
     }
 
+    public static OrderTask getSoftwareVersion() {
+        GetSoftwareRevisionTask getSoftwareVersionTask = new GetSoftwareRevisionTask();
+        return getSoftwareVersionTask;
+    }
+
     public static OrderTask getWifiSoftwareVersion() {
         ParamsTask task = new ParamsTask();
         task.setData(ParamsKeyEnum.KEY_WIFI_SOFTWARE_VERSION);
@@ -397,25 +402,25 @@ public class OrderTaskAssembler {
         return task;
     }
 
-    public static OrderTask getMeteringReportEnable(){
+    public static OrderTask getMeteringReportEnable() {
         ParamsTask task = new ParamsTask();
         task.setData(ParamsKeyEnum.KEY_METERING_REPORT_ENABLE);
         return task;
     }
 
-    public static OrderTask getPowerReportInterval(){
+    public static OrderTask getPowerReportInterval() {
         ParamsTask task = new ParamsTask();
         task.setData(ParamsKeyEnum.KEY_POWER_REPORT_INTERVAL);
         return task;
     }
 
-    public static OrderTask getEnergyReportInterval(){
+    public static OrderTask getEnergyReportInterval() {
         ParamsTask task = new ParamsTask();
         task.setData(ParamsKeyEnum.KEY_ENERGY_REPORT_INTERVAL);
         return task;
     }
 
-    public static OrderTask getLoadDetectionNotifyEnable(){
+    public static OrderTask getLoadDetectionNotifyEnable() {
         ParamsTask task = new ParamsTask();
         task.setData(ParamsKeyEnum.KEY_LOAD_DETECTION_NOTIFY_ENABLE);
         return task;
@@ -849,7 +854,7 @@ public class OrderTaskAssembler {
         return task;
     }
 
-    public static OrderTask setUtcTime(){
+    public static OrderTask setUtcTime() {
         ParamsTask task = new ParamsTask();
         task.setCurrentUtcTime();
         return task;

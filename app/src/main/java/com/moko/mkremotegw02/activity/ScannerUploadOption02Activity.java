@@ -82,7 +82,8 @@ public class ScannerUploadOption02Activity extends BaseActivity<ActivityScannerU
         mRelationshipValues.add("MAC&ADV name&Raw data");
         mRelationshipValues.add("ADV name | Raw data");
         mRelationshipValues.add("ADV NAME & MAC");
-        mRelationshipValues.add("MAC/ADV name/Raw data");
+        if (mMokoDevice.deviceType != 0x10)
+            mRelationshipValues.add("MAC/ADV name/Raw data");
         mHandler.postDelayed(() -> {
             dismissLoadingProgressDialog();
             finish();
@@ -375,6 +376,7 @@ public class ScannerUploadOption02Activity extends BaseActivity<ActivityScannerU
         });
         dialog.show(getSupportFragmentManager());
     }
+
     public void onScanMode(View view) {
         if (isWindowLocked())
             return;
@@ -386,6 +388,7 @@ public class ScannerUploadOption02Activity extends BaseActivity<ActivityScannerU
         });
         dialog.show(getSupportFragmentManager());
     }
+
     public void onDuplicateDataFilter(View view) {
         start(DuplicateDataFilter02Activity.class);
     }

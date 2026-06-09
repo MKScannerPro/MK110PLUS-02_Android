@@ -11,7 +11,7 @@ public class MQTTConstants {
     public static final int CONFIG_MSG_ID_OTA = 1006;
     public static final int CONFIG_MSG_ID_NTP_SERVER = 1008;
     public static final int CONFIG_MSG_ID_SYSTEM_TIME = 1009;
-    public static final int CONFIG_MSG_ID_COMMUNICATION_TIMEOUT = 1209;
+    public static final int CONFIG_MSG_ID_COMMUNICATION_TIMEOUT = 1010;
     public static final int CONFIG_MSG_ID_INDICATOR_STATUS = 1011;
     public static final int CONFIG_MSG_ID_RESET = 1013;
     public static final int CONFIG_MSG_ID_OUTPUT_SWITCH = 1015;
@@ -189,7 +189,7 @@ public class MQTTConstants {
     public static final int READ_MSG_ID_RECONNECT_TIMEOUT = 2005;
     public static final int READ_MSG_ID_NTP_SERVER = 2008;
     public static final int READ_MSG_ID_SYSTEM_TIME = 2009;
-    public static final int READ_MSG_ID_COMMUNICATION_TIMEOUT = 2209;
+    public static final int READ_MSG_ID_COMMUNICATION_TIMEOUT = 2010;
     public static final int READ_MSG_ID_INDICATOR_STATUS = 2011;
     public static final int READ_MSG_ID_DEVICE_STATUS = 2012;
     public static final int READ_MSG_ID_OUTPUT_SWITCH = 2015;
